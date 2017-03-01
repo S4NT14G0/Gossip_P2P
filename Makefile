@@ -7,7 +7,7 @@ JC = javac
 	$(JC) $(JFLAGS) $*.java
 
 CLASSES = \
-	GossipP2PServer.java
+	GossipP2PServer.java \
 
 default: classes
 
@@ -15,3 +15,5 @@ classes: $(CLASSES:.java=.class)
 
 clean:
 	$(RM) *.class
+	$(RM) gossipp2p/messages/*.class
+	$(RM) gossipp2p/serverthreads/*.class

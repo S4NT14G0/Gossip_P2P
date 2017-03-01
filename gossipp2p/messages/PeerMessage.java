@@ -1,5 +1,7 @@
 
-public class PeerMessage {
+package gossipp2p.messages;
+
+public class PeerMessage extends Message {
 	
 	int id;
 	String peerName;
