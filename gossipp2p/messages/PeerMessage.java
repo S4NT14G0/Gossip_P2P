@@ -1,6 +1,11 @@
 
 package gossipp2p.messages;
 
+/**
+ * Message that will add a new peer to the list of known peers
+ * @author santi
+ *
+ */
 public class PeerMessage extends Message {
 	
 	int id;

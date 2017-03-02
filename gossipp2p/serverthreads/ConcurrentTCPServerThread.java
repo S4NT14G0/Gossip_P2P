@@ -21,7 +21,6 @@ public class ConcurrentTCPServerThread extends Thread {
     }
 	
 	public void run () {
-		
         try {    
 			reader = new BufferedReader(new InputStreamReader(sock.getInputStream()));
 			out = new OutputStreamWriter(sock.getOutputStream());
