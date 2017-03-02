@@ -6,13 +6,13 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 
-public class UDPServerThread extends Thread {
+public class ConcurrentUDPServerThread extends Thread {
 	
 	private static final int ECHOMAX = 255;
 	DatagramSocket dgSocket;
 	DatagramPacket packet;
 	
-	public UDPServerThread (DatagramSocket _dgSocket) {
+	public ConcurrentUDPServerThread (DatagramSocket _dgSocket) {
 		dgSocket = _dgSocket;
     	System.out.println("UDP Created");
 	}

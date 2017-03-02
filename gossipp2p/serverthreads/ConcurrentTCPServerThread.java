@@ -8,14 +8,14 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 
-public class TCPServerThread extends Thread {
+public class ConcurrentTCPServerThread extends Thread {
 
     Socket sock;
     String input;
     BufferedReader reader;
     OutputStreamWriter out;
     
-    public TCPServerThread(Socket _sock) {
+    public ConcurrentTCPServerThread(Socket _sock) {
     	sock = _sock;
     	System.out.println("TCP Created");
     }
@@ -29,17 +29,13 @@ public class TCPServerThread extends Thread {
 			out.write("Hello from concurrent!\n");
 			out.flush();
 	
-			//for(;;){
-				input=reader.readLine();
-				
-				if(input==null) {
-					//break;
-				}
-				
+			while ((input = reader.readLine()) != null) {
 				out.write(input+"\n");
 				out.flush();
-			//}
-		    sock.close();
+			}
+			
+			sock.close();
+
 		} catch(IOException e){
 		    //e.printStackTrace();
 		}
