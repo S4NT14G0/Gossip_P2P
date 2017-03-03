@@ -2,11 +2,12 @@ package gossipp2p.serverthreads;
 
 import gossipp2p.messages.GossipMessage;
 import gossipp2p.messages.Message;
+import gossipp2p.messages.PeerMessage;
+import gossipp2p.messages.PeersListMessage;
+import gossipp2p.messages.ErrorMessage;
 
 import java.io.BufferedReader;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -44,15 +45,24 @@ public class IterativeTCPServerThread extends Thread {
 		      
 		        // While the reader isn't giving us nulls echo the user input
 				while ((input = reader.readLine()) != null) {
+					
+					// Try to identify the message from the stream
 					Message inputMessage = Message.identifyMessage(input);
 					
+					// Check what type of message was sent
 					if (inputMessage instanceof GossipMessage) {
 						out.write("Gossip Message Received\n");
 						out.flush();
+					} else if (inputMessage instanceof PeerMessage) {
+						out.write("Add Peer Message Received\n");
+						out.flush();
+					} else if (inputMessage instanceof PeersListMessage) {
+						
+					} else if (inputMessage instanceof ErrorMessage) {
+						out.write("Add Peer Message Received\n");
+						out.flush();
 					}
 					
-					out.write(input+"\n");
-					out.flush();
 				}
 	
 		        sock.close();  

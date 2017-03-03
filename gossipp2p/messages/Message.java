@@ -21,7 +21,9 @@ public class Message {
 			return new GossipMessage(tokens[1], tokens[2], tokens[3]);			
 		}
 		else if (tokens[0].equals("PEER")) {
-			
+			return new PeerMessage(tokens);
+		} else if (tokens[0].equals("PEERS?\n")) {
+			return new PeersListMessage();
 		}
 		
 		return new ErrorMessage();

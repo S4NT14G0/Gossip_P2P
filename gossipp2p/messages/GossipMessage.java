@@ -10,13 +10,18 @@ import java.util.Date;
  */
 public class GossipMessage extends Message {
 	
+	// Unique ID of message
 	int id;
+	// sha256 encoded message
 	String sha256EncodedMessage;
+	// Date of message
 	Date messageDate;
+	// The message itself
 	String message;
 	
+	// Formatter for the incoming date information
 	private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS'Z'");
-			
+		
 	public GossipMessage (String _sha256EncodedMessage, final Date _messageDate, final String _message) {
 		this.sha256EncodedMessage = _sha256EncodedMessage;
 		this.messageDate = _messageDate;
