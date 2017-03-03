@@ -4,12 +4,23 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.*;
+import java.sql.SQLException;
 
+import gossipp2p.database.*;
 public class GossipP2PServer {
 
     public static void main (String args[]) {
     	//runConcurrentServer(3333);
-    	runIterativeServer(3333);
+    	try {
+			Database.getInstance().initializeDatabase(args[1]);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+    	Database.getInstance().testDB();
+    	
+    	runIterativeServer(Integer.parseInt(args[0]));
     }
     
     static void runConcurrentServer(int port) {

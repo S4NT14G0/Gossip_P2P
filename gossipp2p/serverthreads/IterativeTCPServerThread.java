@@ -59,7 +59,7 @@ public class IterativeTCPServerThread extends Thread {
 					} else if (inputMessage instanceof PeersListMessage) {
 						
 					} else if (inputMessage instanceof ErrorMessage) {
-						out.write("Add Peer Message Received\n");
+						out.write("Error message received\n");
 						out.flush();
 					}
 					
