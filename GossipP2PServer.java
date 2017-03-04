@@ -17,9 +17,7 @@ public class GossipP2PServer {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-    	
-    	Database.getInstance().testDB();
-    	
+    	    	
     	runIterativeServer(Integer.parseInt(args[0]));
     }
     

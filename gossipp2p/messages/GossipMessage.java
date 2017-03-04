@@ -11,7 +11,7 @@ import java.util.Date;
 public class GossipMessage extends Message {
 	
 	// Unique ID of message
-	int id;
+	int id = -1;
 	// sha256 encoded message
 	String sha256EncodedMessage;
 	// Date of message
@@ -60,5 +60,21 @@ public class GossipMessage extends Message {
 
 	public GossipMessage() {
 		// TODO Auto-generated constructor stub
-	}	
+	}
+	
+	public String getSha256EncodedMessage() {
+		return this.sha256EncodedMessage;
+	}
+	
+	public int getId() {
+		return this.id;
+	}
+	
+	public Date getMessageDate () {
+		return this.messageDate;
+	}
+	
+	public String getMessage() {
+		return this.message;
+	}
 }

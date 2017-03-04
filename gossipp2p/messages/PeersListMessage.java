@@ -12,4 +12,18 @@ public class PeersListMessage extends Message {
 	public PeersListMessage() {
 		// TODO Auto-generated constructor stub
 	}
+	
+	public String toString () {
+		String peersList = "PEERS|" + this.peers.size() + "|";
+		
+		for (PeerMessage peer : this.peers) {
+			peersList += peer.peerName + ":"
+					+ "PORT=" + peer.portNumber
+					+ "IP=" + peer.ipAddress + "|";
+		}
+		
+		peersList += "%";
+		
+		return peersList;
+	}
 }

@@ -1,5 +1,6 @@
 package gossipp2p.serverthreads;
 
+import gossipp2p.messagehandler.MessageHandler;
 import gossipp2p.messages.ErrorMessage;
 import gossipp2p.messages.PeerMessage;
 import gossipp2p.messages.GossipMessage;
@@ -36,14 +37,16 @@ public class IterativeUDPServerThread extends Thread {
 			if (inputMessage instanceof GossipMessage) {
 				// Log we've received a gossip message
 				System.out.println("Received Gossip Message");
+				MessageHandler.HandleGossipMessage(inputMessage);
 			} else if (inputMessage instanceof PeerMessage) {
 				// Log we received an add peer message
 				System.out.println("Received Peer Message");
-
+				MessageHandler.HandlePeerMessage(inputMessage);
 			} else if (inputMessage instanceof PeersListMessage) {
-				
+				System.out.println("Peers List Requested");
+				MessageHandler.HandlePeersListMessage(packet.getPort(), packet.getAddress().getHostAddress());
 			} else if (inputMessage instanceof ErrorMessage) {
-
+				System.out.println("Error");
 			}
 			
 			//packet.setData("Add Peer Message Received\n".getBytes());

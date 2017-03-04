@@ -1,5 +1,6 @@
 package gossipp2p.serverthreads;
 
+import gossipp2p.messagehandler.MessageHandler;
 import gossipp2p.messages.GossipMessage;
 import gossipp2p.messages.Message;
 import gossipp2p.messages.PeerMessage;
@@ -51,16 +52,24 @@ public class IterativeTCPServerThread extends Thread {
 					
 					// Check what type of message was sent
 					if (inputMessage instanceof GossipMessage) {
-						out.write("Gossip Message Received\n");
-						out.flush();
+						//out.write("Gossip Message Received\n");
+						//out.flush();
+						System.out.println("Received Gossip Message");
+						MessageHandler.HandleGossipMessage(inputMessage);
 					} else if (inputMessage instanceof PeerMessage) {
-						out.write("Add Peer Message Received\n");
-						out.flush();
+						//out.write("Add Peer Message Received\n");
+						//out.flush();
+						System.out.println("Received Peer Message");
+						MessageHandler.HandlePeerMessage(inputMessage);
 					} else if (inputMessage instanceof PeersListMessage) {
-						
+						//out.write("Peers List Request");
+						//out.flush();
+						System.out.println("Peers List Requested");
+						MessageHandler.HandlePeersListMessage(sock.getPort(), sock.getInetAddress().getHostAddress());
 					} else if (inputMessage instanceof ErrorMessage) {
-						out.write("Error message received\n");
-						out.flush();
+						//out.write("Error message received\n");
+						//out.flush();
+						System.out.println("Error");
 					}
 					
 				}
