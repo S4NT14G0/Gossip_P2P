@@ -1,11 +1,22 @@
-package gossipp2p.serverthreads;
-
-import gossipp2p.messagehandler.MessageHandler;
-import gossipp2p.messages.GossipMessage;
-import gossipp2p.messages.Message;
-import gossipp2p.messages.PeerMessage;
-import gossipp2p.messages.PeersListMessage;
-import gossipp2p.messages.ErrorMessage;
+/* ------------------------------------------------------------------------- */
+/*   Copyright (C) 2017 
+                Author:  sroig2013@my.fit.edu
+                Florida Tech, Computer Science
+   
+       This program is free software; you can redistribute it and/or modify
+       it under the terms of the GNU Affero General Public License as published by
+       the Free Software Foundation; either the current version of the License, or
+       (at your option) any later version.
+   
+      This program is distributed in the hope that it will be useful,
+      but WITHOUT ANY WARRANTY; without even the implied warranty of
+      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+      GNU General Public License for more details.
+  
+      You should have received a copy of the GNU Affero General Public License
+      along with this program; if not, write to the Free Software
+      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.              */
+/* ------------------------------------------------------------------------- */
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -13,6 +24,11 @@ import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+/**
+ * Thread for an iterative TCP Gossip Server.
+ * @author sroig2013@my.fit.edu
+ *
+ */
 public class IterativeTCPServerThread extends Thread {
 	
 	int port;
@@ -20,10 +36,17 @@ public class IterativeTCPServerThread extends Thread {
     BufferedReader reader;
     OutputStreamWriter out;
     
+    /**
+     * Construct a new iterative TCP Gossip Server.
+     * @param _port Port that server will listen on.
+     */
 	public IterativeTCPServerThread (int _port) {
 		this.port = _port;
 	}
 	
+	/**
+	 * Run the thread.
+	 */
 	public void run () {
 		try {
 			// Create a new server socket
@@ -62,10 +85,10 @@ public class IterativeTCPServerThread extends Thread {
 						System.out.println("Received Peer Message");
 						MessageHandler.HandlePeerMessage(inputMessage);
 					} else if (inputMessage instanceof PeersListMessage) {
-						//out.write("Peers List Request");
-						//out.flush();
+						out.write(Database.getInstance().getPeersList().toString());
+						out.flush();
 						System.out.println("Peers List Requested");
-						MessageHandler.HandlePeersListMessage(sock.getPort(), sock.getInetAddress().getHostAddress());
+						//MessageHandler.HandlePeersListMessage(sock.getPort(), sock.getInetAddress().getHostAddress());
 					} else if (inputMessage instanceof ErrorMessage) {
 						//out.write("Error message received\n");
 						//out.flush();

@@ -1,5 +1,3 @@
-package gossipp2p.serverthreads;
-
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
