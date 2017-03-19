@@ -14,6 +14,7 @@ import java.net.Socket;
 import java.net.SocketAddress;
 
 import edu.fit.santiago.gossipp2p_client.models.ServerModel;
+import edu.fit.santiago.gossipp2p_client.socket_threads.TCPClientThread;
 
 
 /**
@@ -41,21 +42,7 @@ public class GossipMessageActivity extends AppCompatActivity {
     }
 
     private void SendGossipMessage () {
-        try {
-            socket = new Socket();
-            SocketAddress sa = new InetSocketAddress(InetAddress.getByName(ServerModel.getInstance().getIpAddress()), ServerModel.getInstance().getPort());
-            socket.connect(sa, 1000);
-
-            OutputStream out = socket.getOutputStream();
-
-            out.write("PEERS?\n".getBytes());
-            out.flush();
-
-            socket.close();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        new TCPClientThread(ServerModel.getInstance().getIpAddress(), ServerModel.getInstance().getPort(), "PEERS?\\n").start();
     }
 
 }

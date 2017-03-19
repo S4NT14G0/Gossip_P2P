@@ -23,5 +23,6 @@
         <activity android:name=".AddPeerActivity"></activity>
 
     </application>
+    <uses-permission android:name="android.permission.INTERNET" />
 
 </manifest>
