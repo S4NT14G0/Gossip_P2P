@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="edu.fit.santiago.gossipp2p_client.MainActivity">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:title="GOSSIP P2P"
+            app:popupTheme="@style/AppTheme.PopupOverlay"
+            app:title="GOSSIP P2P" />
+    </android.support.design.widget.AppBarLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:touchscreenBlocksFocus="false">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/txtServer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                 android:hint="Server Name" />
+
+            <EditText
+                android:id="@+id/txtPort"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:hint="Port Number"
+                android:layout_weight="1"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <RadioGroup
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <RadioButton
+                    android:id="@+id/rbTCP"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="TCP"/>
+                <RadioButton
+                    android:id="@+id/rbUDP"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="UDP"/>
+            </RadioGroup>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_weight="1">
+
+            <Button
+                android:id="@+id/btnGossip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Gossip"
+                android:layout_weight=".5"/>
+
+            <Button
+                android:id="@+id/btnAddPeer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add Peer"
+                android:layout_weight=".5"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>
