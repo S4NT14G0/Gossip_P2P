@@ -9,6 +9,10 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.RadioGroup;
+
+import edu.fit.santiago.gossipp2p_client.models.*;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -24,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
         btnGossip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                setServerValues ();
                 Intent intent = new Intent(MainActivity.this, GossipMessageActivity.class);
                 startActivity(intent);
             }
@@ -33,10 +38,24 @@ public class MainActivity extends AppCompatActivity {
         btnAddPeer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                setServerValues ();
                 Intent intent = new Intent(MainActivity.this, AddPeerActivity .class);
                 startActivity(intent);
             }
         });
+    }
+
+    private void setServerValues () {
+        EditText etIpAddress = (EditText) findViewById(R.id.txtServer);
+        EditText etPort = (EditText) findViewById(R.id.txtPort);
+        RadioGroup rbGroup = (RadioGroup) findViewById(R.id.rdGrpConnType);
+
+        String ipAddress = etIpAddress.getText().toString();
+        int port = Integer.parseInt(etPort.getText().toString());
+        int connType = rbGroup.getCheckedRadioButtonId();
+
+        ServerModel.getInstance().setServer(ipAddress, port, connType);
+
     }
 
     @Override

@@ -56,15 +56,14 @@
             android:orientation="horizontal">
 
             <RadioGroup
+                android:id="@+id/rdGrpConnType"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
                 <RadioButton
-                    android:id="@+id/rbTCP"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="TCP"/>
                 <RadioButton
-                    android:id="@+id/rbUDP"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="UDP"/>
