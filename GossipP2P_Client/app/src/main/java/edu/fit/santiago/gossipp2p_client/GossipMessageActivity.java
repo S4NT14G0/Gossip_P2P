@@ -5,6 +5,8 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import java.io.OutputStream;
 import java.net.DatagramSocket;
@@ -23,13 +25,17 @@ import edu.fit.santiago.gossipp2p_client.socket_threads.TCPClientThread;
 
 public class GossipMessageActivity extends AppCompatActivity {
 
-    Socket socket;
-    DatagramSocket dgSocket;
+    EditText etGossipMessage;
+    TextView txtServerResponse;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gossip_message);
+
+        etGossipMessage = (EditText) findViewById(R.id.etGossipMessage);
+        txtServerResponse = (TextView) findViewById(R.id.txtGossipServerResponse);
+
         final FloatingActionButton fabSendGossip = (FloatingActionButton) findViewById(R.id.fabSendGossip);
 
         fabSendGossip.setOnClickListener(new View.OnClickListener() {
@@ -42,7 +48,8 @@ public class GossipMessageActivity extends AppCompatActivity {
     }
 
     private void SendGossipMessage () {
-        new TCPClientThread(ServerModel.getInstance().getIpAddress(), ServerModel.getInstance().getPort(), "PEERS?\\n").start();
+        TCPClientThread tcpClientThread = new TCPClientThread(txtServerResponse);
+        tcpClientThread.execute(etGossipMessage.getText().toString());
     }
 
 }
