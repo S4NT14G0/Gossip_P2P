@@ -6,8 +6,8 @@ package edu.fit.santiago.gossipp2p_client.models;
 
 public class ServerModel {
     private String ipAddress;
-    int port;
-    int connectionType;
+    Integer port;
+    Integer connectionType;
 
     private static final ServerModel ourInstance = new ServerModel();
 
@@ -18,7 +18,7 @@ public class ServerModel {
     private ServerModel() {
     }
 
-    public void setServer (String _ipAddress, int _port, int _connectionType) {
+    public void setServer (String _ipAddress, Integer _port, Integer _connectionType) {
         this.ipAddress = _ipAddress;
         this.port = _port;
         this.connectionType = _connectionType;
@@ -28,11 +28,11 @@ public class ServerModel {
         return this.ipAddress;
     }
 
-    public int getPort () {
+    public Integer getPort () {
         return this.port;
     }
 
-    public int getConnectionType () {
+    public Integer getConnectionType () {
         return this.connectionType;
     }
 }
