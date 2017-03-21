@@ -1,10 +1,7 @@
 package edu.fit.santiago.gossipp2p_client.socket_threads;
 
 import android.os.AsyncTask;
-import android.widget.EditText;
 import android.widget.TextView;
-
-import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -67,13 +64,3 @@ public class TCPClientThread extends AsyncTask<String, Void, String> {
         txtServerResponse.setText(s);
     }
 }
-
-//    /**
-//     * Construct a new iterative TCP Gossip Server.
-//     * @param _port Port that server will listen on.
-//     */
-//    public TCPClientThread (String _ipAddress, int _port, String _message) {
-//        this.ipAddress = _ipAddress;
-//        this.port = _port;
-//        this.message = _message;
-//    }

@@ -14,6 +14,8 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import edu.fit.santiago.gossipp2p_client.models.ServerModel;
 import edu.fit.santiago.gossipp2p_client.socket_threads.TCPClientThread;
@@ -41,13 +43,18 @@ public class GossipMessageActivity extends AppCompatActivity {
         fabSendGossip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS'Z'");
+                Date currentDateTime = new Date();
+                String strCurrentDateTime = sdf.format(currentDateTime);
+                String message = etGossipMessage.getText().toString();
+
                 // Try to send message to the server
-                SendGossipMessage();
+                SendGossipMessage(message);
             }
         });
     }
 
-    private void SendGossipMessage () {
+    private void SendGossipMessage (String message) {
         TCPClientThread tcpClientThread = new TCPClientThread(txtServerResponse);
         tcpClientThread.execute(etGossipMessage.getText().toString());
     }

@@ -1,8 +1,9 @@
 package edu.fit.santiago.gossipp2p_client;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -29,8 +30,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 setServerValues ();
-                Intent intent = new Intent(MainActivity.this, GossipMessageActivity.class);
-                startActivity(intent);
+
+                if (ServerModel.getInstance().getConnectionType() != -1
+                        && ServerModel.getInstance().getPort() != -1
+                        && !ServerModel.getInstance().getIpAddress().isEmpty()) {
+                    Intent intent = new Intent(MainActivity.this, GossipMessageActivity.class);
+                    startActivity(intent);
+                } else {
+                    promptMissingFields();
+                }
             }
         });
 
@@ -39,8 +47,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 setServerValues ();
-                Intent intent = new Intent(MainActivity.this, AddPeerActivity .class);
-                startActivity(intent);
+
+                if (ServerModel.getInstance().getConnectionType() != -1
+                        && ServerModel.getInstance().getPort() != -1
+                        && !ServerModel.getInstance().getIpAddress().isEmpty()) {
+                    Intent intent = new Intent(MainActivity.this, AddPeerActivity .class);
+                    startActivity(intent);
+                } else {
+                    promptMissingFields();
+                }
+
             }
         });
     }
@@ -50,12 +66,31 @@ public class MainActivity extends AppCompatActivity {
         EditText etPort = (EditText) findViewById(R.id.txtPort);
         RadioGroup rbGroup = (RadioGroup) findViewById(R.id.rdGrpConnType);
 
+        int port = -1;
+
         String ipAddress = etIpAddress.getText().toString();
-        int port = Integer.parseInt(etPort.getText().toString());
+
+        if (!etPort.getText().toString().isEmpty())
+            port = Integer.parseInt(etPort.getText().toString());
+
+
         int connType = rbGroup.getCheckedRadioButtonId();
 
         ServerModel.getInstance().setServer(ipAddress, port, connType);
 
+    }
+
+    private void promptMissingFields () {
+        final AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
+        alertDialog.setTitle("Invalid Values");
+        alertDialog.setMessage("Please fill out all fields.");
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        alertDialog.dismiss();
+                    }
+                });
+        alertDialog.show();
     }
 
     @Override
