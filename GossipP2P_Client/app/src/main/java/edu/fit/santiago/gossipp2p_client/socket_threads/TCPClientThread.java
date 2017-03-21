@@ -11,6 +11,7 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
+import edu.fit.santiago.gossipp2p_client.utils.HashString;
 
 import edu.fit.santiago.gossipp2p_client.R;
 import edu.fit.santiago.gossipp2p_client.models.ServerModel;

@@ -17,8 +17,8 @@ import java.net.SocketAddress;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import edu.fit.santiago.gossipp2p_client.models.ServerModel;
 import edu.fit.santiago.gossipp2p_client.socket_threads.TCPClientThread;
+import edu.fit.santiago.gossipp2p_client.utils.HashString;
 
 
 /**
@@ -40,6 +40,7 @@ public class GossipMessageActivity extends AppCompatActivity {
 
         final FloatingActionButton fabSendGossip = (FloatingActionButton) findViewById(R.id.fabSendGossip);
 
+        // Send message on message button.
         fabSendGossip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -56,7 +57,10 @@ public class GossipMessageActivity extends AppCompatActivity {
 
     private void SendGossipMessage (String message) {
         TCPClientThread tcpClientThread = new TCPClientThread(txtServerResponse);
-        tcpClientThread.execute(etGossipMessage.getText().toString());
+
+        String message = etGossipMessage.getText().toString();
+        String shaEncodedMessage = HashString.getSHA256HashString(message);
+        tcpClientThread.execute(message, shaEncodedMessage);
     }
 
 }
