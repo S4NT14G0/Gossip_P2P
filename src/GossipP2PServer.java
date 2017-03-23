@@ -18,13 +18,11 @@
       Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.              */
 /* ------------------------------------------------------------------------- */
 
-import java.net.*;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
+import org.apache.commons.cli.*;
+
+import java.net.DatagramSocket;
+import java.net.ServerSocket;
+import java.net.Socket;
 
 /**
  * Gossip P2P Server
@@ -44,7 +42,8 @@ public class GossipP2PServer {
     	options.addOption(p);
     	Option d = new Option("d", true, "Path to database.");
     	options.addOption(d);
-    	
+
+
     	CommandLineParser clp = new DefaultParser();
     	
     	try {
@@ -60,7 +59,7 @@ public class GossipP2PServer {
     		// If we have all we need start the server and setup database.
         	if (port != -1 && !databasePath.isEmpty() && databasePath != null) {
     			Database.getInstance().initializeDatabase(databasePath);
-    	    	runIterativeServer(port);
+                runConcurrentServer(port);
         	} else {
         		showArgMenu(options);
         	}
@@ -101,6 +100,8 @@ public class GossipP2PServer {
     		
     	}    	
     }
+
+
 
     /**
      * Setup current server as iterative server.
