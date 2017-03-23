@@ -50,7 +50,8 @@ public class IterativeTCPServerThread extends Thread {
 	public void run () {
 		try {
 			// Create a new server socket
-			ServerSocket serverSocket = new ServerSocket(port);		
+			ServerSocket serverSocket = new ServerSocket(port);	
+			System.out.println(serverSocket.getInetAddress().getLocalHost());	
 					
 			// Keep accepting connections
 		    for (;;) {
