@@ -15,6 +15,9 @@ import android.widget.RadioGroup;
 
 import edu.fit.santiago.gossipp2p_client.models.*;
 
+/**
+ * Main activity for setting up server connection information
+ */
 public class MainActivity extends AppCompatActivity {
 
     @Override

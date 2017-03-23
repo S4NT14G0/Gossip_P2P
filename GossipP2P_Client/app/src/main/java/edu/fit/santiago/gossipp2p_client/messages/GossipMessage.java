@@ -59,7 +59,7 @@ public class GossipMessage {
      * @param _messageDate Date of message.
      * @param _message Contents of message.
      */
-    public GossipMessage (String _sha256EncodedMessage, final String _messageDate, final String _message) {
+    public GossipMessage (final String _sha256EncodedMessage, final String _messageDate, final String _message) {
         this.sha256EncodedMessage = _sha256EncodedMessage;
 
         try {
