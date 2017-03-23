@@ -17,8 +17,10 @@ import java.net.SocketAddress;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import edu.fit.santiago.gossipp2p_client.messages.GossipMessage;
 import edu.fit.santiago.gossipp2p_client.socket_threads.TCPClientThread;
 import edu.fit.santiago.gossipp2p_client.utils.HashString;
+import edu.fit.santiago.gossipp2p_client.messages.GossipMessage;
 
 
 /**
@@ -44,23 +46,33 @@ public class GossipMessageActivity extends AppCompatActivity {
         fabSendGossip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS'Z'");
-                Date currentDateTime = new Date();
-                String strCurrentDateTime = sdf.format(currentDateTime);
-                String message = etGossipMessage.getText().toString();
+
 
                 // Try to send message to the server
-                SendGossipMessage(message);
+                SendGossipMessage();
             }
         });
     }
 
-    private void SendGossipMessage (String message) {
-        TCPClientThread tcpClientThread = new TCPClientThread(txtServerResponse);
+    private void SendGossipMessage () {
 
+        String hashTest = HashString.getSHA256HashString("2017-01-09-16-18-20-001Z:Tom eats Jerry");
+        // Get the current date and time
+        final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS'Z'");
+        Date currentDateTime = new Date();
+        String date = sdf.format(currentDateTime);
+
+        // The message contents
         String message = etGossipMessage.getText().toString();
-        String shaEncodedMessage = HashString.getSHA256HashString(message);
-        tcpClientThread.execute(message, shaEncodedMessage);
+
+        // Get the encoded hash set
+        String shaEncodedMessage = HashString.getSHA256HashString(date + ":" + message);
+
+        // Create the gossip message
+        GossipMessage gossipMessage = new GossipMessage(shaEncodedMessage, date, message);
+
+        TCPClientThread tcpClientThread = new TCPClientThread(txtServerResponse);
+        tcpClientThread.execute(gossipMessage.toString());
     }
 
 }
