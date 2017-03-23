@@ -17,14 +17,21 @@ import java.net.SocketAddress;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import edu.fit.santiago.gossipp2p_client.messages.GossipMessage;
+import edu.fit.santiago.gossipp2p_client.models.ServerModel;
 import edu.fit.santiago.gossipp2p_client.socket_threads.TCPClientThread;
+import edu.fit.santiago.gossipp2p_client.socket_threads.UDPClientThread;
 import edu.fit.santiago.gossipp2p_client.utils.HashString;
+import edu.fit.santiago.gossipp2p_client.messages.GossipMessage;
 
 
 /**
  * Created by santiago on 3/18/17.
  */
 
+/**
+ * Activity for sending a gossip message
+ */
 public class GossipMessageActivity extends AppCompatActivity {
 
     EditText etGossipMessage;
@@ -44,23 +51,41 @@ public class GossipMessageActivity extends AppCompatActivity {
         fabSendGossip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                // Get the current date and time
                 final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS'Z'");
                 Date currentDateTime = new Date();
-                String strCurrentDateTime = sdf.format(currentDateTime);
+                String date = sdf.format(currentDateTime);
+
+                // The message contents
                 String message = etGossipMessage.getText().toString();
 
-                // Try to send message to the server
-                SendGossipMessage(message);
+                // Get the encoded hash set
+                String shaEncodedMessage = HashString.getSHA256HashString(date + ":" + message);
+
+                // Create the gossip message
+                GossipMessage gossipMessage = new GossipMessage(shaEncodedMessage, date, message);
+
+                // Send the message
+                if (ServerModel.getInstance().getConnectionType() == 1) {
+                    // Try to send message to the server
+                    SendGossipMessageTCP(gossipMessage.toString());
+                } else {
+                    SendGossipMessageUDP(gossipMessage.toString());
+                }
+
             }
         });
     }
 
-    private void SendGossipMessage (String message) {
+    private void SendGossipMessageTCP (String gossipMessage) {
         TCPClientThread tcpClientThread = new TCPClientThread(txtServerResponse);
+        tcpClientThread.execute(gossipMessage);
+    }
 
-        String message = etGossipMessage.getText().toString();
-        String shaEncodedMessage = HashString.getSHA256HashString(message);
-        tcpClientThread.execute(message, shaEncodedMessage);
+    private void SendGossipMessageUDP (String gossipMessage) {
+        UDPClientThread udpClientThread = new UDPClientThread(txtServerResponse);
+        udpClientThread.execute(gossipMessage);
     }
 
 }

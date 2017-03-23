@@ -18,7 +18,7 @@
             android:orientation="horizontal">
 
             <EditText
-                android:id="@+id/txtPeerName"
+                android:id="@+id/etPeerName"
                 android:layout_width="0dip"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -32,7 +32,7 @@
             android:orientation="horizontal">
 
             <EditText
-                android:id="@+id/txtGossipMessage"
+                android:id="@+id/etPeerAddress"
                 android:layout_width="0dip"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -40,7 +40,7 @@
                 android:hint="Peer Address" />
 
             <EditText
-                android:id="@+id/txtPeerPort"
+                android:id="@+id/etPeerPort"
                 android:layout_width="0dip"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -55,18 +55,17 @@
             android:layout_weight="1"
             android:orientation="horizontal">
 
-            <EditText
+            <TextView
                 android:id="@+id/txtAPServerResponse"
                 android:layout_width="0dip"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:hint="Server Response"
-                android:inputType="textMultiLine" />
+                android:hint="Server Response" />
 
         </LinearLayout>
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fabSendGossip"
+            android:id="@+id/fabSendPeer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"

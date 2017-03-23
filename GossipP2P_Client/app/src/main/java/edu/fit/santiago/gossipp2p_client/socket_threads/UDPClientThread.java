@@ -7,24 +7,23 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
-import edu.fit.santiago.gossipp2p_client.utils.HashString;
 
-import edu.fit.santiago.gossipp2p_client.R;
 import edu.fit.santiago.gossipp2p_client.models.ServerModel;
 
 /**
- * Created by Santiago on 3/19/2017.
+ * Created by Santiago on 3/23/2017.
  */
 
 /**
- * Thread for client to connect to server using TCP
+ * Thread for client to connect to server using UDP
  */
-public class TCPClientThread extends AsyncTask<String, Void, String> {
-
+public class UDPClientThread extends AsyncTask<String, Void, String> {
     String ipAddress;
     int port;
     String input;
@@ -33,10 +32,10 @@ public class TCPClientThread extends AsyncTask<String, Void, String> {
     TextView txtServerResponse;
 
     /**
-     * Constructor for TCP thread
+     * Constructor for UDP thread
      * @param serverResponse Text view that the client should place server response text into.
      */
-    public TCPClientThread (TextView serverResponse) {
+    public UDPClientThread (TextView serverResponse) {
         txtServerResponse = serverResponse;
     }
 
@@ -48,17 +47,21 @@ public class TCPClientThread extends AsyncTask<String, Void, String> {
     protected String doInBackground(String... messages) {
         StringBuilder serverResponse = new StringBuilder();
         try {
-            Socket socket = new Socket();
-            SocketAddress sa = new InetSocketAddress(InetAddress.getByName(ServerModel.getInstance().getIpAddress()), ServerModel.getInstance().getPort());
-            socket.connect(sa, 1000);
 
-            reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            OutputStream out = socket.getOutputStream();
+            DatagramSocket ds = new DatagramSocket();
+            byte[] data = new byte[1000];
+            data = (messages[0] + "\n").getBytes();
+            DatagramPacket packet = new DatagramPacket (data, data.length, InetAddress.getByName(ServerModel.getInstance().getIpAddress()), ServerModel.getInstance().getPort());
+            ds.send(packet);
 
-            out.write((messages[0] + "\n").getBytes());
-            out.flush();
-            serverResponse.append(reader.readLine());
-            socket.close();
+            byte buffer[] = new byte[1000];
+
+            DatagramPacket incomingPacket = new DatagramPacket(buffer, buffer.length);
+            ds.receive(incomingPacket);     // Receive packet from client
+            // Get the string message out of the datagram packet
+            String input = new String(incomingPacket.getData(), "UTF-8");
+            serverResponse.append(input);
+            ds.close();
 
         } catch (Exception e) {
             e.printStackTrace();
