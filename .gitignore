@@ -1,3 +1,7 @@
 !.gitignore
 *.swp
 *.iml
+.idea/
+GossipP2P_Client/app/src/main/gen/edu/fit/santiago/gossipp2p_client/BuildConfig.java
+GossipP2P_Client/app/src/main/gen/edu/fit/santiago/gossipp2p_client/Manifest.java
+GossipP2P_Client/app/src/main/gen/edu/fit/santiago/gossipp2p_client/R.java
