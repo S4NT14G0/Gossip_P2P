@@ -31,10 +31,10 @@ public class Message {
 		if (input.contains("GOSSIP") && input.endsWith("%"))
 			return true;
 		
-		if (input.contains("PEER") && input.endsWith("%"))
+		if (input.contains("PEERS?\\n") && input.endsWith("\\n")) 
 			return true;
 		
-		if (input.contains("PEERS?\\n") && input.endsWith("\\n")) 
+		if (input.contains("PEER:") && input.endsWith("%"))
 			return true;
 		
 		return false;

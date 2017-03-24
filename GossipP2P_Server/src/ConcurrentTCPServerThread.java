@@ -34,10 +34,10 @@ public class ConcurrentTCPServerThread extends Thread {
                     sock.getPort());
             
             String input = "";
+            
             while ((recvMsgSize = in.read(byteBuffer)) != -1) {
-                input += new String (byteBuffer, "UTF-8");
-                input = input.replaceAll("\n", "").trim();
-                
+                input += new String (byteBuffer, "UTF-8").replace("\n", "").trim();
+                byteBuffer = new byte[1024];
                 
                 // Check if a message is ready to execute
                 if (Message.isReadyForParsing(input)) {
@@ -46,38 +46,51 @@ public class ConcurrentTCPServerThread extends Thread {
                 	input = "";
                 } else {
                 	// Find how many times % and \\n exist in input to split apart each message
-                	int endTokenCount = input.length() - input.replace("\\n|%", "").length();
-                	//StringUtils.countMatches(input, "\\n|%");
+                	int slashNTokenCount = input.length() - input.replace("\\n", "").length() - 1;
+                	int percentTokenCount = input.length() - input.replace("%", "").length();
+                	
+                	int endTokenCount = (slashNTokenCount > 0) ? slashNTokenCount + percentTokenCount : percentTokenCount;
                 	
                 	if (endTokenCount > 0) {
-                		String[] messageTokens = input.split("\\n|%");
-
+                		// Split up the messages based on their end characters
+                		String[] messageTokens = input.split("\\\\n|%");
+                		
+                		// In this case we have an extra unfinished message at the end
+                		if (messageTokens.length > endTokenCount) {
+                			// Loop through the message tokens and handle them.
+                			// Leave the last one there so it can be completed the next time the buffer hash input
+                			for (int i = 0; i < messageTokens.length - 1; i++) {
+                   				if (messageTokens[i].contains("PEERS?")) {
+                   					messageTokens[i] += "\\n";
+                				} else {
+                					messageTokens[i] += "%";
+                				}
+                				
+                				// Handle each message
+                				handleMessage(messageTokens[i]);
+                			}
+                			
+                			input = messageTokens[messageTokens.length - 1];
+                		} else {
+                			for (String message : messageTokens) {
+                				// Put the end tokens back on each message
+                				if (message.contains("PEERS?")) {
+                					message += "\\n";
+                				} else {
+                					message += "%";
+                				}
+                				
+                				// Handle each message
+                				handleMessage(message);
+                				
+                				// reset the current input
+                				input = "";
+                			}
+                		}
+                		
                 	}
-   
                 }
             }
-
-//                // Look for client response
-//                String clientResponse = getClientResponse();
-//
-//                while (!clientResponse.contains("%")){
-//                    String extraResponse = getClientResponse();
-//                    clientResponse += extraResponse;
-//                }
-//
-//                String[] messageTokens = clientResponse.split("%");
-//
-//                Queue<String> messageQueue = new LinkedList<String>();
-//
-//                for (int i = 0; i < messageTokens.length; i++) {
-//                    messageQueue.add(messageTokens[i] + "%");
-//                }
-//
-//                while (messageQueue.size() > 0) {
-//                    String currentMesage = messageQueue.remove();
-//
-//
-//                }
             
 			sock.close();
 
@@ -102,22 +115,14 @@ public class ConcurrentTCPServerThread extends Thread {
             System.out.println("Received Peer Message");
             MessageHandler.HandlePeerMessage(inputMessage);
         } else if (inputMessage instanceof PeersListMessage) {
-            out.write(Database.getInstance().getPeersList().toString().getBytes());
+            out.write((Database.getInstance().getPeersList().toString() + "\n").getBytes());
             out.flush();
             System.out.println("Peers List Requested");
-            //MessageHandler.HandlePeersListMessage(sock.getPort(), sock.getInetAddress().getHostAddress());
         } else if (inputMessage instanceof ErrorMessage) {
             out.write("Error message received\n".getBytes());
             out.flush();
             System.out.println("Error");
         }
 	}
-	
-	private String getClientResponse() throws IOException{
 
-        while ((recvMsgSize = in.read(byteBuffer)) != -1) {
-            return  new String (byteBuffer, "UTF-8");
-        }
-        return "";
-    }
 }
