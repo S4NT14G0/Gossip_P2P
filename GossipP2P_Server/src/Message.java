@@ -26,6 +26,20 @@
  */
 public class Message {
 		
+	public static boolean isReadyForParsing (String input) {
+		
+		if (input.contains("GOSSIP") && input.endsWith("%"))
+			return true;
+		
+		if (input.contains("PEERS?\\n") && input.endsWith("\\n")) 
+			return true;
+		
+		if (input.contains("PEER:") && input.endsWith("%"))
+			return true;
+		
+		return false;
+	}
+	
 	/**
 	 * Identifies message type and returns new instance based on message type.
 	 * @param strMessage String message to be identified.
