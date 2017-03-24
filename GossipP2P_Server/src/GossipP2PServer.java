@@ -112,7 +112,7 @@ public class GossipP2PServer {
     	try {
 			new IterativeTCPServerThread (port).start();
 			new IterativeUDPServerThread (port).start();
-
+			
     	} catch (Exception e) {
     		
     	}    	

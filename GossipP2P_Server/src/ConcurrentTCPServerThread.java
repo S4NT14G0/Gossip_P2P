@@ -100,29 +100,31 @@ public class ConcurrentTCPServerThread extends Thread {
 	}
 
 	private void handleMessage (String currentMessage) throws IOException {
-        // Try to identify the message from the stream
-        Message inputMessage = Message.identifyMessage(currentMessage);
+		synchronized (Database.getInstance()) {
+	        // Try to identify the message from the stream
+	        Message inputMessage = Message.identifyMessage(currentMessage);
 
-        // Check what type of message was sent
-        if (inputMessage instanceof GossipMessage) {
-            out.write("Gossip Message Received\n".getBytes());
-            out.flush();
-            System.out.println("Received Gossip Message");
-            MessageHandler.HandleGossipMessage(inputMessage);
-        } else if (inputMessage instanceof PeerMessage) {
-            out.write("Add Peer Message Received\n".getBytes());
-            out.flush();
-            System.out.println("Received Peer Message");
-            MessageHandler.HandlePeerMessage(inputMessage);
-        } else if (inputMessage instanceof PeersListMessage) {
-            out.write((Database.getInstance().getPeersList().toString() + "\n").getBytes());
-            out.flush();
-            System.out.println("Peers List Requested");
-        } else if (inputMessage instanceof ErrorMessage) {
-            out.write("Error message received\n".getBytes());
-            out.flush();
-            System.out.println("Error");
-        }
+	        // Check what type of message was sent
+	        if (inputMessage instanceof GossipMessage) {
+	            out.write("Gossip Message Received\n".getBytes());
+	            out.flush();
+	            System.out.println("Received Gossip Message");
+	            MessageHandler.HandleGossipMessage(inputMessage);
+	        } else if (inputMessage instanceof PeerMessage) {
+	            out.write("Add Peer Message Received\n".getBytes());
+	            out.flush();
+	            System.out.println("Received Peer Message");
+	            MessageHandler.HandlePeerMessage(inputMessage);
+	        } else if (inputMessage instanceof PeersListMessage) {
+	            out.write((Database.getInstance().getPeersList().toString() + "\n").getBytes());
+	            out.flush();
+	            System.out.println("Peers List Requested");
+	        } else if (inputMessage instanceof ErrorMessage) {
+	            out.write("Error message received\n".getBytes());
+	            out.flush();
+	            System.out.println("Error");
+	        }
+		}
 	}
 
 }

@@ -87,38 +87,39 @@ public class ConcurrentUDPServerThread extends Thread {
 	}
 	
 	private void handleMessage (String currentMessage) throws IOException {
-		
-  	  // Try to parse the message
-  	  Message inputMessage = Message.identifyMessage(currentMessage);
-		
-  	  // Check what type of message was sent
-  	  if (inputMessage instanceof GossipMessage) {
-  		  // Log we've received a gossip message
-  		  System.out.println("Received Gossip Message");
-  		  byteBuffer = "Received Gossip Message\n".getBytes();
-  		  packet = new DatagramPacket(byteBuffer, byteBuffer.length, packet.getAddress(), packet.getPort());
-  		  dgSocket.send(packet);
-  		  MessageHandler.HandleGossipMessage(inputMessage);
-  	  } else if (inputMessage instanceof PeerMessage) {
-  		  // Log we received an add peer message
-  		  System.out.println("Received Peer Message");
-  		  byteBuffer = "Received Peer Message\n".getBytes();
-  		  packet = new DatagramPacket(byteBuffer, byteBuffer.length, packet.getAddress(), packet.getPort());
-  		  dgSocket.send(packet);
-  		  MessageHandler.HandlePeerMessage(inputMessage);
-  	  } else if (inputMessage instanceof PeersListMessage) {
-  		  System.out.println("Peers List Requested");
-  		  byteBuffer = (Database.getInstance().getPeersList().toString() + "\n").getBytes();
-  		  packet = new DatagramPacket(byteBuffer, byteBuffer.length, packet.getAddress(), packet.getPort());
-  		  dgSocket.send(packet);
-  	  } else if (inputMessage instanceof ErrorMessage) {
-  		  System.out.println("Error");
-  		  byteBuffer = "Received Error Message\n".getBytes();
-  		  packet = new DatagramPacket(byteBuffer, byteBuffer.length, packet.getAddress(), packet.getPort());
-  		  dgSocket.send(packet);
-  	  }
-		
-  	  packet.setLength(byteBuffer.length);
+		synchronized (Database.getInstance()) {
+		  	  // Try to parse the message
+		  	  Message inputMessage = Message.identifyMessage(currentMessage);
+				
+		  	  // Check what type of message was sent
+		  	  if (inputMessage instanceof GossipMessage) {
+		  		  // Log we've received a gossip message
+		  		  System.out.println("Received Gossip Message");
+		  		  byteBuffer = "Received Gossip Message\n".getBytes();
+		  		  packet = new DatagramPacket(byteBuffer, byteBuffer.length, packet.getAddress(), packet.getPort());
+		  		  dgSocket.send(packet);
+		  		  MessageHandler.HandleGossipMessage(inputMessage);
+		  	  } else if (inputMessage instanceof PeerMessage) {
+		  		  // Log we received an add peer message
+		  		  System.out.println("Received Peer Message");
+		  		  byteBuffer = "Received Peer Message\n".getBytes();
+		  		  packet = new DatagramPacket(byteBuffer, byteBuffer.length, packet.getAddress(), packet.getPort());
+		  		  dgSocket.send(packet);
+		  		  MessageHandler.HandlePeerMessage(inputMessage);
+		  	  } else if (inputMessage instanceof PeersListMessage) {
+		  		  System.out.println("Peers List Requested");
+		  		  byteBuffer = (Database.getInstance().getPeersList().toString() + "\n").getBytes();
+		  		  packet = new DatagramPacket(byteBuffer, byteBuffer.length, packet.getAddress(), packet.getPort());
+		  		  dgSocket.send(packet);
+		  	  } else if (inputMessage instanceof ErrorMessage) {
+		  		  System.out.println("Error");
+		  		  byteBuffer = "Received Error Message\n".getBytes();
+		  		  packet = new DatagramPacket(byteBuffer, byteBuffer.length, packet.getAddress(), packet.getPort());
+		  		  dgSocket.send(packet);
+		  	  }
+				
+		  	  packet.setLength(byteBuffer.length);
+		}
 	}
 }
 
