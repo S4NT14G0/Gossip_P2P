@@ -3,6 +3,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.net.UnknownHostException;
 
 public class ConcurrentUDPServerThread extends Thread {
 	
@@ -10,9 +11,9 @@ public class ConcurrentUDPServerThread extends Thread {
 	DatagramSocket dgSocket;
 	DatagramPacket packet;
 	
-	public ConcurrentUDPServerThread (DatagramSocket _dgSocket) {
+	public ConcurrentUDPServerThread (DatagramSocket _dgSocket) throws UnknownHostException {
 		dgSocket = _dgSocket;
-    	System.out.println("UDP Created");
+    	System.out.println("UDP Created @ " + dgSocket.getInetAddress().getLocalHost());
 	}
 	
 	public void run () {
