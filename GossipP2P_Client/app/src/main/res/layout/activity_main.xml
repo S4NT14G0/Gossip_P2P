@@ -67,6 +67,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="UDP"/>
+
             </RadioGroup>
 
         </LinearLayout>
@@ -74,8 +75,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_weight="1">
+            android:orientation="horizontal">
 
             <Button
                 android:id="@+id/btnGossip"
@@ -90,6 +90,21 @@
                 android:layout_height="wrap_content"
                 android:text="Add Peer"
                 android:layout_weight=".5"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/txtServerIncoming"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:hint="Incoming Messages" />
 
         </LinearLayout>
 
