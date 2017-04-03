@@ -25,7 +25,7 @@ package edu.fit.santiago.gossipp2p_client.messages;
  * @author sroig2013@my.fit.edu
  *
  */
-public class PeerMessage {
+public class PeerMessage extends Message{
 
     String peerName = "";
     int portNumber = -1;
@@ -42,6 +42,35 @@ public class PeerMessage {
         peerName = _peerName;
         portNumber = _portNumber;
         ipAddress = _ipAddress;
+    }
+
+    /**
+     * Constructs new Peer Message.
+     * @param _peerMessage Array of strings to be turned into peer message.
+     */
+    public PeerMessage (String[] _peerMessage) {
+
+        // If the ipAddress is seperated using '.'
+        if (_peerMessage.length == 4) {
+            // Handle IPV4 IP Address
+            // Grab the new peer's name
+            this.peerName = _peerMessage[1];
+            // Split the second token to get the port number
+            portNumber = Integer.parseInt (_peerMessage[2].split("=")[1]);
+            // Store the ipAddress
+            ipAddress = _peerMessage[3].split("=")[1];
+        } else if (_peerMessage.length == 7) {
+            // Handle IPV6 IP Address
+            // Grab the new peer's name
+            this.peerName = _peerMessage[1];
+            // Split the second token to get the port number
+            portNumber = Integer.parseInt (_peerMessage[2].split("=")[1]);
+            // Store the ipAddress
+            ipAddress = _peerMessage[3].split("=")[1]
+                    + ":" + _peerMessage[4]
+                    + ":" + _peerMessage[5]
+                    + ":" + _peerMessage[6];
+        }
     }
 
     /**

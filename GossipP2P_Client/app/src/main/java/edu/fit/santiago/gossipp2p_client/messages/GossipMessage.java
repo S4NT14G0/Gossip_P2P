@@ -28,7 +28,7 @@ import java.util.Date;
  * @author sroig2013@my.fit.edu
  *
  */
-public class GossipMessage {
+public class GossipMessage extends Message {
 
     // sha256 encoded message
     String sha256EncodedMessage;
