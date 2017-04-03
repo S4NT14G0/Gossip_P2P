@@ -26,6 +26,7 @@ import edu.fit.santiago.gossipp2p_client.utils.HashString;
  */
 public class AddPeerActivity extends AppCompatActivity {
     TextView txtServerResponse;
+    ServerModel serverModel = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +37,7 @@ public class AddPeerActivity extends AppCompatActivity {
         final EditText etPeerName = (EditText) findViewById(R.id.etPeerName);
         final EditText etPeerIP = (EditText) findViewById(R.id.etPeerAddress);
         final EditText etPeerPort = (EditText) findViewById(R.id.etPeerPort);
+        serverModel = (ServerModel) getIntent().getSerializableExtra("ServerModel");
 
         final FloatingActionButton fabSendPeer = (FloatingActionButton) findViewById(R.id.fabSendPeer);
         fabSendPeer.setOnClickListener(new View.OnClickListener() {
@@ -52,7 +54,7 @@ public class AddPeerActivity extends AppCompatActivity {
                 PeerMessage peerMessage = new PeerMessage(peerName, peerPort, peerAddress);
 
                 // Send the message
-                if (ServerModel.getInstance().getConnectionType() == 1) {
+                if (serverModel.getConnectionType() == 1) {
                     // Try to send message to the server
                     SendPeerMessageTCP(peerMessage.toString());
                 } else {
@@ -63,12 +65,12 @@ public class AddPeerActivity extends AppCompatActivity {
     }
 
     private void SendPeerMessageTCP (String peerMessage) {
-        TCPClientThread tcpClientThread = new TCPClientThread(txtServerResponse);
+        TCPClientThread tcpClientThread = new TCPClientThread(txtServerResponse, serverModel);
         tcpClientThread.execute(peerMessage);
     }
 
     private void SendPeerMessageUDP (String peerMessage) {
-        UDPClientThread udpClientThread = new UDPClientThread(txtServerResponse);
+        UDPClientThread udpClientThread = new UDPClientThread(txtServerResponse, serverModel);
         udpClientThread.execute(peerMessage);
     }
 

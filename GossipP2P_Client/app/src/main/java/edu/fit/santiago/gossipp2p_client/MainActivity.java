@@ -22,22 +22,30 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Load the main content
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // Find the gossip button in the view
         Button btnGossip = (Button) findViewById(R.id.btnGossip);
 
+        // Set an onclick listener for gossip click
         btnGossip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setServerValues ();
+                // Get the current values for serve to send to
+                ServerModel serverModel = getServerValuesFromUI();
 
-                if (ServerModel.getInstance().getConnectionType() != -1
-                        && ServerModel.getInstance().getPort() != -1
-                        && !ServerModel.getInstance().getIpAddress().isEmpty()) {
+                // UI Validation
+                if (serverModel.getConnectionType() != -1
+                        && serverModel.getPort() != -1
+                        && !serverModel.getIpAddress().isEmpty()) {
+
+                    // Start gossip activity
                     Intent intent = new Intent(MainActivity.this, GossipMessageActivity.class);
+                    intent.putExtra("ServerModel", serverModel);
                     startActivity(intent);
                 } else {
                     promptMissingFields();
@@ -49,12 +57,13 @@ public class MainActivity extends AppCompatActivity {
         btnAddPeer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setServerValues ();
+                ServerModel serverModel = getServerValuesFromUI();
 
-                if (ServerModel.getInstance().getConnectionType() != -1
-                        && ServerModel.getInstance().getPort() != -1
-                        && !ServerModel.getInstance().getIpAddress().isEmpty()) {
+                if (serverModel.getConnectionType() != -1
+                        && serverModel.getPort() != -1
+                        && !serverModel.getIpAddress().isEmpty()) {
                     Intent intent = new Intent(MainActivity.this, AddPeerActivity .class);
+                    intent.putExtra("ServerModel", serverModel);
                     startActivity(intent);
                 } else {
                     promptMissingFields();
@@ -64,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void setServerValues () {
+    private ServerModel getServerValuesFromUI () {
         EditText etIpAddress = (EditText) findViewById(R.id.txtServer);
         EditText etPort = (EditText) findViewById(R.id.txtPort);
         RadioGroup rbGroup = (RadioGroup) findViewById(R.id.rdGrpConnType);
@@ -76,14 +85,13 @@ public class MainActivity extends AppCompatActivity {
         if (!etPort.getText().toString().isEmpty())
             port = Integer.parseInt(etPort.getText().toString());
 
-
         int connType = rbGroup.getCheckedRadioButtonId();
 
-        ServerModel.getInstance().setServer(ipAddress, port, connType);
-
+        return  new ServerModel(ipAddress, port, connType);
     }
 
     private void promptMissingFields () {
+        // Create dialog if fields are missing
         final AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
         alertDialog.setTitle("Invalid Values");
         alertDialog.setMessage("Please fill out all fields.");

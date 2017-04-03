@@ -31,13 +31,15 @@ public class TCPClientThread extends AsyncTask<String, Void, String> {
     BufferedReader reader;
     OutputStreamWriter out;
     TextView txtServerResponse;
+    ServerModel serverModel;
 
     /**
      * Constructor for TCP thread
      * @param serverResponse Text view that the client should place server response text into.
      */
-    public TCPClientThread (TextView serverResponse) {
+    public TCPClientThread (TextView serverResponse, ServerModel _serverModel) {
         txtServerResponse = serverResponse;
+        serverModel = _serverModel;
     }
 
     @Override
@@ -49,7 +51,7 @@ public class TCPClientThread extends AsyncTask<String, Void, String> {
         StringBuilder serverResponse = new StringBuilder();
         try {
             Socket socket = new Socket();
-            SocketAddress sa = new InetSocketAddress(InetAddress.getByName(ServerModel.getInstance().getIpAddress()), ServerModel.getInstance().getPort());
+            SocketAddress sa = new InetSocketAddress(InetAddress.getByName(serverModel.getIpAddress()), serverModel.getPort());
             socket.connect(sa, 1000);
 
             reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));

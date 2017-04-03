@@ -30,13 +30,15 @@ public class UDPClientThread extends AsyncTask<String, Void, String> {
     BufferedReader reader;
     OutputStreamWriter out;
     TextView txtServerResponse;
+    ServerModel serverModel;
 
     /**
      * Constructor for UDP thread
      * @param serverResponse Text view that the client should place server response text into.
      */
-    public UDPClientThread (TextView serverResponse) {
+    public UDPClientThread (TextView serverResponse, ServerModel _serverModel) {
         txtServerResponse = serverResponse;
+        serverModel = _serverModel;
     }
 
     @Override
@@ -51,7 +53,7 @@ public class UDPClientThread extends AsyncTask<String, Void, String> {
             DatagramSocket ds = new DatagramSocket();
             byte[] data = new byte[1000];
             data = (messages[0] + "\n").getBytes();
-            DatagramPacket packet = new DatagramPacket (data, data.length, InetAddress.getByName(ServerModel.getInstance().getIpAddress()), ServerModel.getInstance().getPort());
+            DatagramPacket packet = new DatagramPacket (data, data.length, InetAddress.getByName(serverModel.getIpAddress()), serverModel.getPort());
             ds.send(packet);
 
             byte buffer[] = new byte[1000];

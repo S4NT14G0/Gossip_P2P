@@ -36,6 +36,7 @@ public class GossipMessageActivity extends AppCompatActivity {
 
     EditText etGossipMessage;
     TextView txtServerResponse;
+    ServerModel serverModel = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +47,8 @@ public class GossipMessageActivity extends AppCompatActivity {
         txtServerResponse = (TextView) findViewById(R.id.txtGossipServerResponse);
 
         final FloatingActionButton fabSendGossip = (FloatingActionButton) findViewById(R.id.fabSendGossip);
+
+        serverModel = (ServerModel) getIntent().getSerializableExtra("ServerModel");
 
         // Send message on message button.
         fabSendGossip.setOnClickListener(new View.OnClickListener() {
@@ -67,7 +70,7 @@ public class GossipMessageActivity extends AppCompatActivity {
                 GossipMessage gossipMessage = new GossipMessage(shaEncodedMessage, date, message);
 
                 // Send the message
-                if (ServerModel.getInstance().getConnectionType() == 1) {
+                if (serverModel.getConnectionType() == 1) {
                     // Try to send message to the server
                     SendGossipMessageTCP(gossipMessage.toString());
                 } else {
@@ -79,12 +82,12 @@ public class GossipMessageActivity extends AppCompatActivity {
     }
 
     private void SendGossipMessageTCP (String gossipMessage) {
-        TCPClientThread tcpClientThread = new TCPClientThread(txtServerResponse);
+        TCPClientThread tcpClientThread = new TCPClientThread(txtServerResponse, serverModel);
         tcpClientThread.execute(gossipMessage);
     }
 
     private void SendGossipMessageUDP (String gossipMessage) {
-        UDPClientThread udpClientThread = new UDPClientThread(txtServerResponse);
+        UDPClientThread udpClientThread = new UDPClientThread(txtServerResponse, serverModel);
         udpClientThread.execute(gossipMessage);
     }
 

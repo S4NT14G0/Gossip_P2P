@@ -4,21 +4,20 @@ package edu.fit.santiago.gossipp2p_client.models;
  * Created by santiago on 3/19/17.
  */
 
+import java.io.Serializable;
+
 /**
  * Represents the server options on main activity
  */
-public class ServerModel {
+public class ServerModel implements Serializable{
     private String ipAddress;
     Integer port;
     Integer connectionType;
 
-    private static final ServerModel ourInstance = new ServerModel();
-
-    public static ServerModel getInstance() {
-        return ourInstance;
-    }
-
-    private ServerModel() {
+    public ServerModel(String _ipAddress, int _port, int _connectionType) {
+        this.ipAddress = _ipAddress;
+        this.port = _port;
+        this.connectionType = _connectionType;
     }
 
     /**
