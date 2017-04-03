@@ -7,5 +7,6 @@ import edu.fit.santiago.gossipp2p_client.messages.GossipMessage;
  */
 
 public interface MessageDao {
-    public boolean updateGossipMessage (GossipMessage _gossipMessage);
+    public void insertGossipMessage(GossipMessage gossipMessage);
+    public boolean isExistingMessage (GossipMessage gossipMessage);
 }

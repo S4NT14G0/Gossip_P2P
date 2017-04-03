@@ -57,7 +57,7 @@ public class PeerDaoImpl extends SQLiteOpenHelper implements PeerDao {
         SQLiteDatabase db = getReadableDatabase();
 
         String selectPeersQuery = "select * from peers where " +
-                "name=" + "'" + peerMessage.getPeerName() + "'";
+                COLUMNS[1] + " = " + "'" + peerMessage.getPeerName() + "'";
 
         Cursor cursor = db.rawQuery(selectPeersQuery, null);
 
