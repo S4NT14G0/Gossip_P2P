@@ -20,6 +20,10 @@
 
 
 package edu.fit.santiago.gossipp2p_client.messages;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * Message that will add a new peer to the list of known peers
  * @author sroig2013@my.fit.edu
@@ -30,6 +34,9 @@ public class PeerMessage extends Message{
     String peerName = "";
     int portNumber = -1;
     String ipAddress = "";
+    String dateOfLastContact = "";
+
+    private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS'Z'");
 
     /**
      * Constructs a new peer message.
@@ -42,6 +49,38 @@ public class PeerMessage extends Message{
         peerName = _peerName;
         portNumber = _portNumber;
         ipAddress = _ipAddress;
+    }
+
+    public PeerMessage () {}
+
+    /**
+     * Constructs a new peer message.
+     *
+     * @param _peerName
+     * @param _portNumber
+     * @param _ipAddress
+     * @param _dateOfLastContact
+     */
+    public PeerMessage(String _peerName, int _portNumber, String _ipAddress, Date _dateOfLastContact) {
+        peerName = _peerName;
+        portNumber = _portNumber;
+        ipAddress = _ipAddress;
+        dateOfLastContact = sdf.format(_dateOfLastContact);
+    }
+
+    /**
+     * Constructs a new peer message.
+     *
+     * @param _peerName
+     * @param _portNumber
+     * @param _ipAddress
+     * @param _dateOfLastContact
+     */
+    public PeerMessage(String _peerName, int _portNumber, String _ipAddress, String _dateOfLastContact) {
+        peerName = _peerName;
+        portNumber = _portNumber;
+        ipAddress = _ipAddress;
+        dateOfLastContact = _dateOfLastContact;
     }
 
     /**
@@ -73,16 +112,9 @@ public class PeerMessage extends Message{
         }
     }
 
-    /**
-     * Default constructor
-     */
-    public PeerMessage() {
-    }
-
     public String toString() {
         return "PEER:" + this.peerName + ":PORT=" + this.portNumber + ":IP=" + this.ipAddress + "%";
     }
-
 
     /**
      * @return Peer Message peer name.
@@ -104,4 +136,6 @@ public class PeerMessage extends Message{
     public String getIpAddress() {
         return this.ipAddress;
     }
+
+    public String getDateOfLastContact () {return this.dateOfLastContact;}
 }
