@@ -5,9 +5,12 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
+import java.net.ServerSocket;
 import java.net.Socket;
 
 /**
@@ -30,9 +33,22 @@ public class ServiceMain extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Toast.makeText(this, "service starting", Toast.LENGTH_SHORT).show();
-
-
         // If we get killed, after returning from here, restart
+        Socket sock;
+
+        try {
+            ServerSocket serverSocket = new ServerSocket(0);
+
+            for (;;) {
+                sock = serverSocket.accept();
+
+                new TCPServerThread(sock).execute();
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         return START_STICKY;
     }
 

@@ -21,6 +21,7 @@
         </activity>
         <activity android:name=".GossipMessageActivity"></activity>
         <activity android:name=".AddPeerActivity"></activity>
+        <service android:name=".socket_threads.ServiceMain"></service>
 
     </application>
     <uses-permission android:name="android.permission.INTERNET" />

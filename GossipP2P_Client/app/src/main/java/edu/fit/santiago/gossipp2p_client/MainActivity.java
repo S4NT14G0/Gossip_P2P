@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.RadioGroup;
 
 import edu.fit.santiago.gossipp2p_client.models.*;
+import edu.fit.santiago.gossipp2p_client.socket_threads.ServiceMain;
 
 /**
  * Main activity for setting up server connection information
@@ -27,6 +28,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        Intent intent = new Intent(this, ServiceMain.class);
+        startService(intent);
 
         // Find the gossip button in the view
         Button btnGossip = (Button) findViewById(R.id.btnGossip);
@@ -125,4 +129,5 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
 }

@@ -3,24 +3,65 @@ package edu.fit.santiago.gossipp2p_client.socket_threads;
 import android.os.AsyncTask;
 import android.widget.TextView;
 
-import java.net.ServerSocket;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.Socket;
+import java.net.UnknownHostException;
 
 /**
- * Created by Santiago on 4/2/2017.
+ * Thread for client to connect to server using TCP
  */
+public class TCPServerThread extends AsyncTask<String, Void, String> {
 
-public class TCPServerThread extends AsyncTask <Void, Void, String> {
+    Socket sock;
+    InputStream in;
+    OutputStream out ;
+    byte[] byteBuffer = new byte[1024];
+    int recvMsgSize;
 
-    TextView serverIncoming;
-    ServerSocket socket;
-
-    public TCPServerThread(TextView _serverIncoming, ServerSocket _socket) {
-        serverIncoming = _serverIncoming;
-        socket = _socket;
+    /**
+     * Constructor for TCP thread
+     * @param _socket Text view that the client should place server response text into.
+     */
+    public TCPServerThread (Socket _socket) throws UnknownHostException {
+        sock = _socket;
+        System.out.println("TCP Created @ " + _socket.getInetAddress().getLocalHost());
     }
 
     @Override
-    protected String doInBackground(Void... params) {
-        return null;
+    protected void onPreExecute() {
+        super.onPreExecute();
+    }
+
+    protected String doInBackground(String... messages) {
+        try {
+            // Setup the streams
+            in = sock.getInputStream();
+            out = sock.getOutputStream();
+
+            // Print to console to show which port we're connected too
+            System.out.println("Handling client at " +
+                    sock.getInetAddress().getHostAddress() + " on port " +
+                    sock.getPort());
+
+            String input = "";
+
+            while ((recvMsgSize = in.read(byteBuffer)) != -1) {
+                input += new String(byteBuffer, "UTF-8").replace("\n", "").trim();
+                byteBuffer = new byte[1024];
+                out.write(byteBuffer);
+                out.flush();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return "";
+    }
+
+    @Override
+    protected void onPostExecute(final String s) {
     }
 }
