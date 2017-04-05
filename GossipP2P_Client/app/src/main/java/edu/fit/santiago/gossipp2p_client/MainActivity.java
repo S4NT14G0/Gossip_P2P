@@ -1,25 +1,42 @@
 package edu.fit.santiago.gossipp2p_client;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import java.math.BigInteger;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.nio.ByteOrder;
+
+import edu.fit.santiago.gossipp2p_client.events.IncomingServerMessageEvent;
 import edu.fit.santiago.gossipp2p_client.models.*;
-import edu.fit.santiago.gossipp2p_client.socket_threads.ServiceMain;
+import edu.fit.santiago.gossipp2p_client.socket_threads.ServerService;
 
 /**
  * Main activity for setting up server connection information
  */
 public class MainActivity extends AppCompatActivity {
+
+    TextView serverTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,8 +46,14 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        Intent intent = new Intent(this, ServiceMain.class);
+        // Start the server service
+        Intent intent = new Intent(this, ServerService.class);
+        intent.putExtra("IP", wifiIpAddress());
         startService(intent);
+
+        // Get access to the textview
+        serverTextView = (TextView) findViewById(R.id.txtServerIncoming);
+        serverTextView.setMovementMethod(new ScrollingMovementMethod());
 
         // Find the gossip button in the view
         Button btnGossip = (Button) findViewById(R.id.btnGossip);
@@ -75,6 +98,23 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onIncomingServerMessageEvent(IncomingServerMessageEvent event) {
+        serverTextView.setText(serverTextView.getText() + "\n" + event.message);
     }
 
     private ServerModel getServerValuesFromUI () {
@@ -128,6 +168,30 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+
+    protected String wifiIpAddress() {
+        Context context = getApplicationContext();
+        WifiManager wifiManager = (WifiManager) context.getSystemService(WIFI_SERVICE);
+        int ipAddress = wifiManager.getConnectionInfo().getIpAddress();
+
+        // Convert little-endian to big-endianif needed
+        if (ByteOrder.nativeOrder().equals(ByteOrder.LITTLE_ENDIAN)) {
+            ipAddress = Integer.reverseBytes(ipAddress);
+        }
+
+        byte[] ipByteArray = BigInteger.valueOf(ipAddress).toByteArray();
+
+        String ipAddressString;
+        try {
+            ipAddressString = InetAddress.getByAddress(ipByteArray).getHostAddress();
+        } catch (UnknownHostException ex) {
+            Log.e("WIFIIP", "Unable to get host address.");
+            ipAddressString = null;
+        }
+
+        return ipAddressString;
     }
 
 }

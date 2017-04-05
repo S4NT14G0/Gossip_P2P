@@ -21,9 +21,10 @@
         </activity>
         <activity android:name=".GossipMessageActivity"></activity>
         <activity android:name=".AddPeerActivity"></activity>
-        <service android:name=".socket_threads.ServiceMain"></service>
+        <service android:name=".socket_threads.ServerService"></service>
 
     </application>
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
 </manifest>

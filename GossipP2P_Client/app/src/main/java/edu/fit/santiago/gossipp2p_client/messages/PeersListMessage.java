@@ -20,6 +20,10 @@ package edu.fit.santiago.gossipp2p_client.messages;/* --------------------------
 
 import java.util.ArrayList;
 
+import edu.fit.santiago.gossipp2p_client.asn1.ASN1DecoderFail;
+import edu.fit.santiago.gossipp2p_client.asn1.Decoder;
+import edu.fit.santiago.gossipp2p_client.asn1.Encoder;
+
 /**
  * Represents list of known peers.
  * @author sroig2013@my.fit.edu
@@ -67,6 +71,15 @@ public class PeersListMessage extends Message {
 		} else {
 			return "PEERS|0|";
 		}
-
 	}
+
+    @Override
+    public Encoder getEncoder() {
+        return null;
+    }
+
+    @Override
+    public Object decode(Decoder dec) throws ASN1DecoderFail {
+        return null;
+    }
 }

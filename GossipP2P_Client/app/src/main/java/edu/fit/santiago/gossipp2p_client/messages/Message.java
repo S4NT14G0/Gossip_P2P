@@ -19,12 +19,14 @@ package edu.fit.santiago.gossipp2p_client.messages;/* --------------------------
 /* ------------------------------------------------------------------------- */
 
 
+import edu.fit.santiago.gossipp2p_client.asn1.ASNObj;
+
 /**
  * Super class that represents messages received by the server
  * @author Santiago Roig
  *
  */
-public class Message {
+public abstract class Message extends ASNObj {
 		
 	public static boolean isReadyForParsing (String input) {
 		

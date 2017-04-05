@@ -24,6 +24,10 @@ package edu.fit.santiago.gossipp2p_client.messages;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import edu.fit.santiago.gossipp2p_client.asn1.ASN1DecoderFail;
+import edu.fit.santiago.gossipp2p_client.asn1.Decoder;
+import edu.fit.santiago.gossipp2p_client.asn1.Encoder;
+
 /**
  * Message that will add a new peer to the list of known peers
  * @author sroig2013@my.fit.edu
@@ -138,4 +142,14 @@ public class PeerMessage extends Message{
     }
 
     public String getDateOfLastContact () {return this.dateOfLastContact;}
+
+    @Override
+    public Encoder getEncoder() {
+        return null;
+    }
+
+    @Override
+    public Object decode(Decoder dec) throws ASN1DecoderFail {
+        return null;
+    }
 }

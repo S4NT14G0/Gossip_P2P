@@ -23,6 +23,11 @@ package edu.fit.santiago.gossipp2p_client.messages;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import edu.fit.santiago.gossipp2p_client.asn1.ASN1DecoderFail;
+import edu.fit.santiago.gossipp2p_client.asn1.Decoder;
+import edu.fit.santiago.gossipp2p_client.asn1.Encoder;
+
 /**
  * Represents a GOSSIP message sent by the client
  * @author sroig2013@my.fit.edu
@@ -109,5 +114,21 @@ public class GossipMessage extends Message {
     public String toString () {
         String strGossipMsg = "GOSSIP:" + this.sha256EncodedMessage + ":" + sdf.format(this.messageDate) +  ":" + this.getMessage() + "%";
         return strGossipMsg;
+    }
+
+    @Override
+    public Encoder getEncoder() {
+        Encoder e = new Encoder().initSequence();
+        e.addToSequence(new Encoder(sha256EncodedMessage));
+        e.addToSequence(new Encoder(messageDate.getTime())
+        .setASN1Type(Encoder.TAG_GeneralizedTime));
+        e.addToSequence(new Encoder(message));
+
+        return e.setASN1Type(Encoder.TAG_SEQUENCE);
+    }
+
+    @Override
+    public Object decode(Decoder dec) throws ASN1DecoderFail {
+        return null;
     }
 }

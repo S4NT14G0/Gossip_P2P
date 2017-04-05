@@ -17,7 +17,7 @@ import java.net.Socket;
  * Created by Santiago on 4/2/2017.
  */
 
-public class ServiceMain extends Service {
+public class ServerService extends Service {
 
     int port;
 
@@ -27,27 +27,14 @@ public class ServiceMain extends Service {
         // separate thread because the service normally runs in the process's
         // main thread, which we don't want to block.  We also make it
         // background priority so CPU-intensive work will not disrupt our UI.
-
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Toast.makeText(this, "service starting", Toast.LENGTH_SHORT).show();
         // If we get killed, after returning from here, restart
-        Socket sock;
-
-        try {
-            ServerSocket serverSocket = new ServerSocket(0);
-
-            for (;;) {
-                sock = serverSocket.accept();
-
-                new TCPServerThread(sock).execute();
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        String hostname = intent.getStringExtra("IP");
+        new ServerStartThread(hostname).execute();
 
         return START_STICKY;
     }
@@ -62,4 +49,5 @@ public class ServiceMain extends Service {
     public void onDestroy() {
         Toast.makeText(this, "service done", Toast.LENGTH_SHORT).show();
     }
+
 }
