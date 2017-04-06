@@ -21,6 +21,7 @@
 
 package edu.fit.santiago.gossipp2p_client.messages;
 
+import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -145,11 +146,30 @@ public class PeerMessage extends Message{
 
     @Override
     public Encoder getEncoder() {
-        return null;
+        Encoder e = new Encoder().initSequence();
+
+        e.addToSequence(new Encoder(peerName))
+                .setASN1Type(Encoder.TAG_UTF8String);
+
+        e.addToSequence(new Encoder(portNumber)
+                .setASN1Type(Encoder.TAG_INTEGER));
+
+        e.addToSequence(new Encoder(ipAddress))
+                .setASN1Type(Encoder.TAG_PrintableString);
+        e.setASN1Type(Encoder.CLASS_APPLICATION, Encoder.PC_CONSTRUCTED, new BigInteger("2"));
+        return e;
     }
 
     @Override
     public Object decode(Decoder dec) throws ASN1DecoderFail {
-        return null;
+        PeerMessage peerMessage = new PeerMessage();
+
+        Decoder d = dec.getContent();
+
+        peerMessage.peerName = d.getFirstObject(true).getString(Encoder.TAG_UTF8String);
+        peerMessage.portNumber = d.getFirstObject(true).getInteger(Encoder.TAG_INTEGER).intValue();
+        peerMessage.ipAddress = d.getFirstObject(true).getString(Encoder.TAG_PrintableString);
+
+        return peerMessage;
     }
 }

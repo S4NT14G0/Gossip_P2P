@@ -36,7 +36,7 @@ public class GossipMessageActivity extends AppCompatActivity {
 
     EditText etGossipMessage;
     TextView txtServerResponse;
-    ServerModel serverModel = null;
+    ServerModel serverModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,21 +72,21 @@ public class GossipMessageActivity extends AppCompatActivity {
                 // Send the message
                 if (serverModel.getConnectionType() == 1) {
                     // Try to send message to the server
-                    SendGossipMessageTCP(gossipMessage.toString());
+                    SendGossipMessageTCP(gossipMessage.encode());
                 } else {
-                    SendGossipMessageUDP(gossipMessage.toString());
+                    SendGossipMessageUDP(gossipMessage.encode());
                 }
 
             }
         });
     }
 
-    private void SendGossipMessageTCP (String gossipMessage) {
-        TCPClientThread tcpClientThread = new TCPClientThread(txtServerResponse, serverModel);
-        tcpClientThread.execute(gossipMessage);
+    private void SendGossipMessageTCP (byte[] gossipMessage) {
+        TCPClientThread tcpClientThread = new TCPClientThread(gossipMessage, serverModel);
+        tcpClientThread.start();
     }
 
-    private void SendGossipMessageUDP (String gossipMessage) {
+    private void SendGossipMessageUDP (byte[] gossipMessage) {
         UDPClientThread udpClientThread = new UDPClientThread(txtServerResponse, serverModel);
         udpClientThread.execute(gossipMessage);
     }

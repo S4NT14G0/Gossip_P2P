@@ -20,13 +20,16 @@ package edu.fit.santiago.gossipp2p_client.messages;
       Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.              */
 /* ------------------------------------------------------------------------- */
 
+import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import edu.fit.santiago.gossipp2p_client.asn1.ASN1DecoderFail;
 import edu.fit.santiago.gossipp2p_client.asn1.Decoder;
 import edu.fit.santiago.gossipp2p_client.asn1.Encoder;
+import edu.fit.santiago.gossipp2p_client.utils.HashString;
 
 /**
  * Represents a GOSSIP message sent by the client
@@ -57,6 +60,11 @@ public class GossipMessage extends Message {
         this.message = _message;
     }
 
+    public GossipMessage (final String _message) {
+        this.message = _message;
+        this.messageDate = new Date();
+        this.sha256EncodedMessage = HashString.getSHA256HashString(sdf.format(this.messageDate) + ":" + this.message);
+    }
 
     /**
      * Constructs new GossipMessage.
@@ -119,16 +127,44 @@ public class GossipMessage extends Message {
     @Override
     public Encoder getEncoder() {
         Encoder e = new Encoder().initSequence();
-        e.addToSequence(new Encoder(sha256EncodedMessage));
-        e.addToSequence(new Encoder(messageDate.getTime())
-        .setASN1Type(Encoder.TAG_GeneralizedTime));
-        e.addToSequence(new Encoder(message));
 
-        return e.setASN1Type(Encoder.TAG_SEQUENCE);
+        e.addToSequence(new Encoder(sha256EncodedMessage))
+        .setASN1Type(Encoder.TAG_OCTET_STRING);
+
+        e.addToSequence(new Encoder(toCalendar(this.messageDate))
+        .setASN1Type(Encoder.TAG_GeneralizedTime));
+
+        e.addToSequence(new Encoder(message))
+        .setASN1Type(Encoder.TAG_UTF8String);
+        e.setExplicitASN1Tag(Encoder.CLASS_APPLICATION, Encoder.PC_CONSTRUCTED, new BigInteger("1"));
+        return e;
     }
 
     @Override
     public Object decode(Decoder dec) throws ASN1DecoderFail {
-        return null;
+        GossipMessage gossipMessage = new GossipMessage();
+
+        try {
+            Decoder d = dec.getContent();
+
+            gossipMessage.sha256EncodedMessage = d.getFirstObject(true).getString(Encoder.TAG_OCTET_STRING);
+            gossipMessage.messageDate = sdf.parse(d.getFirstObject(true).getGeneralizedTime(Encoder.TAG_GeneralizedTime));
+            gossipMessage.message = d.getFirstObject(true).getString(Encoder.TAG_UTF8String);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return gossipMessage;
+    }
+
+    private Calendar toCalendar(Date date){
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        return cal;
+    }
+
+    private Date toDate (Calendar cal) {
+        return cal.getTime();
     }
 }

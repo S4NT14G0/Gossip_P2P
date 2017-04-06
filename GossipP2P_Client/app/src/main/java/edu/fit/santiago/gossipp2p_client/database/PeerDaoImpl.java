@@ -12,7 +12,7 @@ import java.util.Date;
 import java.text.SimpleDateFormat;
 
 import edu.fit.santiago.gossipp2p_client.messages.PeerMessage;
-import edu.fit.santiago.gossipp2p_client.messages.PeersListMessage;
+import edu.fit.santiago.gossipp2p_client.messages.PeersAnswerMessage;
 
 /**
  * Created by Santiago on 4/3/2017.
@@ -98,7 +98,7 @@ public class PeerDaoImpl extends SQLiteOpenHelper implements PeerDao {
     }
 
     @Override
-    public PeersListMessage getAllPeers() {
+    public PeersAnswerMessage getAllPeers() {
         SQLiteDatabase db = getReadableDatabase();
 
         String getAllPeersQuery = "Select * FROM " + TABLE_NAME;
@@ -117,7 +117,7 @@ public class PeerDaoImpl extends SQLiteOpenHelper implements PeerDao {
             alPeersList.add(new PeerMessage(name, port, ipAddress, date));
         }
 
-        return new PeersListMessage(alPeersList);
+        return new PeersAnswerMessage(alPeersList);
     }
 
     private int indexOfColumn(String name) {

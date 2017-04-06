@@ -62,7 +62,7 @@ public abstract class Message extends ASNObj {
 			else
 				return new ErrorMessage();
 		} else if (tokens[0].equals("PEERS?\\n")) {
-			return new PeersListMessage();
+			return new PeersAnswerMessage();
 		}
 		
 		return new ErrorMessage();

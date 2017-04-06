@@ -7,13 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-
 import edu.fit.santiago.gossipp2p_client.messages.GossipMessage;
-import edu.fit.santiago.gossipp2p_client.messages.PeerMessage;
-import edu.fit.santiago.gossipp2p_client.messages.PeersListMessage;
 
 /**
  * Created by Santiago on 4/3/2017.

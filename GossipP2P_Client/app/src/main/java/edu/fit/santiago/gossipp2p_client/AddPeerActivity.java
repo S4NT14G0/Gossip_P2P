@@ -56,20 +56,20 @@ public class AddPeerActivity extends AppCompatActivity {
                 // Send the message
                 if (serverModel.getConnectionType() == 1) {
                     // Try to send message to the server
-                    SendPeerMessageTCP(peerMessage.toString());
+                    SendPeerMessageTCP(peerMessage.encode());
                 } else {
-                    SendPeerMessageUDP(peerMessage.toString());
+                    SendPeerMessageUDP(peerMessage.encode());
                 }
             }
         });
     }
 
-    private void SendPeerMessageTCP (String peerMessage) {
-        TCPClientThread tcpClientThread = new TCPClientThread(txtServerResponse, serverModel);
-        tcpClientThread.execute(peerMessage);
+    private void SendPeerMessageTCP (byte[] peerMessage) {
+        TCPClientThread tcpClientThread = new TCPClientThread(peerMessage, serverModel);
+        tcpClientThread.start();
     }
 
-    private void SendPeerMessageUDP (String peerMessage) {
+    private void SendPeerMessageUDP (byte[] peerMessage) {
         UDPClientThread udpClientThread = new UDPClientThread(txtServerResponse, serverModel);
         udpClientThread.execute(peerMessage);
     }

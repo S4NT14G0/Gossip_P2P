@@ -35,6 +35,8 @@ public class ServerStartThread extends AsyncTask<Void, Void, Void>{
         Socket sock;
 
         try {
+            if (hostname == null)
+                hostname = "0.0.0.0";
             ServerSocket serverSocket = new ServerSocket();
             int port = 3333;
             serverSocket.bind(new InetSocketAddress(hostname, port));

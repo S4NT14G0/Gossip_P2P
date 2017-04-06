@@ -18,6 +18,7 @@ package edu.fit.santiago.gossipp2p_client.messages;/* --------------------------
       Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.              */
 /* ------------------------------------------------------------------------- */
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 
 import edu.fit.santiago.gossipp2p_client.asn1.ASN1DecoderFail;
@@ -29,18 +30,18 @@ import edu.fit.santiago.gossipp2p_client.asn1.Encoder;
  * @author sroig2013@my.fit.edu
  *
  */
-public class PeersListMessage extends Message {
+public class PeersAnswerMessage extends Message {
 	ArrayList<PeerMessage> peers;
 	
 	/**
 	 * Constructs new list of peers.
 	 * @param _peers List of known peers.
 	 */
-	public PeersListMessage (ArrayList<PeerMessage> _peers) {
+	public PeersAnswerMessage(ArrayList<PeerMessage> _peers) {
 		this.peers = _peers;
 	}
 
-	public PeersListMessage() {
+	public PeersAnswerMessage() {
 		// TODO Auto-generated constructor stub
 	}
 	
@@ -75,11 +76,22 @@ public class PeersListMessage extends Message {
 
     @Override
     public Encoder getEncoder() {
-        return null;
+		Encoder e = new Encoder().initSequence();
+
+		e.addToSequence(Encoder.getEncoder(peers)).setASN1Type(Encoder.TAG_SEQUENCE);
+
+		e.setExplicitASN1Tag(Encoder.CLASS_CONTEXT, Encoder.PC_CONSTRUCTED, new BigInteger("1"));
+		return e;
     }
 
     @Override
     public Object decode(Decoder dec) throws ASN1DecoderFail {
-        return null;
+        PeersAnswerMessage peersAnswerMessage = new PeersAnswerMessage();
+
+        Decoder d = dec.getContent();
+
+        peersAnswerMessage.peers = d.getSequenceOfAL(Encoder.TAG_SEQUENCE, new PeerMessage());
+
+        return peersAnswerMessage;
     }
 }
