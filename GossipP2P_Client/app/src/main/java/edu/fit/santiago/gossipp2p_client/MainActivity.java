@@ -3,6 +3,8 @@ package edu.fit.santiago.gossipp2p_client;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.hardware.camera2.CameraCaptureSession;
+import android.icu.util.Calendar;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -27,6 +29,8 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteOrder;
 
+import edu.fit.santiago.gossipp2p_client.database.MessageDaoImpl;
+import edu.fit.santiago.gossipp2p_client.database.PeerDaoImpl;
 import edu.fit.santiago.gossipp2p_client.events.IncomingServerMessageEvent;
 import edu.fit.santiago.gossipp2p_client.models.*;
 import edu.fit.santiago.gossipp2p_client.socket_threads.ServerService;
@@ -35,6 +39,12 @@ import edu.fit.santiago.gossipp2p_client.socket_threads.ServerService;
  * Main activity for setting up server connection information
  */
 public class MainActivity extends AppCompatActivity {
+
+    @Override
+    public Context getApplicationContext() {
+        return super.getApplicationContext();
+    }
+
 
     TextView serverTextView;
 
@@ -45,6 +55,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        //new PeerDaoImpl(MyApplication.getAppContext()).deleteAll();
+        //new MessageDaoImpl(MyApplication.getAppContext()).deleteAll();
 
         // Start the server service
         Intent intent = new Intent(this, ServerService.class);

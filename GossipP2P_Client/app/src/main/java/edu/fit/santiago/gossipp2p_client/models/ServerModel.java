@@ -20,6 +20,11 @@ public class ServerModel implements Serializable{
         this.connectionType = _connectionType;
     }
 
+    public ServerModel(String _ipAddress, int _port) {
+        this.ipAddress = _ipAddress;
+        this.port = _port;
+    }
+
     /**
      * Set the server's options
      * @param _ipAddress IP Address to the server

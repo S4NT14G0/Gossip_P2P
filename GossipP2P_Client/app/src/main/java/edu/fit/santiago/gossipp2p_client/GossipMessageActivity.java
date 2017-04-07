@@ -8,6 +8,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.io.OutputStream;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -17,6 +21,7 @@ import java.net.SocketAddress;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import edu.fit.santiago.gossipp2p_client.events.ServerResponseEvent;
 import edu.fit.santiago.gossipp2p_client.messages.GossipMessage;
 import edu.fit.santiago.gossipp2p_client.models.ServerModel;
 import edu.fit.santiago.gossipp2p_client.socket_threads.TCPClientThread;
@@ -81,14 +86,29 @@ public class GossipMessageActivity extends AppCompatActivity {
         });
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onIncomingServerMessageEvent(ServerResponseEvent event) {
+        txtServerResponse.setText(txtServerResponse.getText() + "\n" + event.message);
+    }
     private void SendGossipMessageTCP (byte[] gossipMessage) {
-        TCPClientThread tcpClientThread = new TCPClientThread(gossipMessage, serverModel);
+        TCPClientThread tcpClientThread = new TCPClientThread(gossipMessage, serverModel, true);
         tcpClientThread.start();
     }
 
     private void SendGossipMessageUDP (byte[] gossipMessage) {
-        UDPClientThread udpClientThread = new UDPClientThread(txtServerResponse, serverModel);
-        udpClientThread.execute(gossipMessage);
+        UDPClientThread udpClientThread = new UDPClientThread(gossipMessage, serverModel, true);
+        udpClientThread.start();
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
 }

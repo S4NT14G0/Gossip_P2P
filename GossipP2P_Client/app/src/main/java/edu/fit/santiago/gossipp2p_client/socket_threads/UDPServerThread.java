@@ -1,11 +1,13 @@
 package edu.fit.santiago.gossipp2p_client.socket_threads;
 
-import org.greenrobot.eventbus.EventBus;
-
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
 
-import edu.fit.santiago.gossipp2p_client.events.IncomingServerMessageEvent;
+import edu.fit.santiago.gossipp2p_client.asn1.Decoder;
+import edu.fit.santiago.gossipp2p_client.messages.Message;
+import edu.fit.santiago.gossipp2p_client.messages.UDPServerMessageHandler;
+import edu.fit.santiago.gossipp2p_client.models.ServerModel;
 
 /**
  * Created by Santiago on 4/4/2017.
@@ -23,24 +25,19 @@ public class UDPServerThread extends Thread {
 
     public void run () {
         try{
-            String input ="";
 
             for (;;) {
                 packet = new DatagramPacket(byteBuffer, byteBuffer.length);
                 dgSocket.receive(packet);
-                input = new String(packet.getData(), "UTF-8");
-                postEventBusMessage(input);
-                byteBuffer = (input + "\n").getBytes();
-                packet = new DatagramPacket(byteBuffer, byteBuffer.length, packet.getAddress(), packet.getPort());
-                dgSocket.send(packet);
-                packet.setLength(byteBuffer.length);
+
+                Decoder decoder = new Decoder(packet.getData(), packet.getOffset(), packet.getLength());
+
+                Message unidentifiedMessage = Message.identifyMessage(decoder);
+
+                new UDPServerMessageHandler().handleMessage(unidentifiedMessage, dgSocket, packet.getAddress(), packet.getPort());
             }
         }catch(Exception e) {
             e.printStackTrace();
         }
-    }
-
-    private void postEventBusMessage (String message) {
-        EventBus.getDefault().post(new IncomingServerMessageEvent(message));
     }
 }

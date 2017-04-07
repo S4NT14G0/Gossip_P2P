@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteDatabaseLockedException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
@@ -29,6 +30,10 @@ public class PeerDaoImpl extends SQLiteOpenHelper implements PeerDao {
         super(context, DB_NAME, null, VERSION);
     }
 
+    public PeerDaoImpl (Context context) {
+        super(context, DB_NAME, null, VERSION);
+    }
+
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         VERSION = newVersion;
@@ -38,10 +43,10 @@ public class PeerDaoImpl extends SQLiteOpenHelper implements PeerDao {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        createTables();
+        createTables(db);
     }
 
-    private void createTables () {
+    public void createTables (SQLiteDatabase db) {
         String sqlCreatePeersTable = "CREATE TABLE IF NOT EXISTS peers("
                 + COLUMNS[0] + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + COLUMNS[1] + " string,"
@@ -49,12 +54,12 @@ public class PeerDaoImpl extends SQLiteOpenHelper implements PeerDao {
                 + COLUMNS[3] + " string,"
                 + COLUMNS[4] + " string);";
 
-        getWritableDatabase().execSQL(sqlCreatePeersTable);
+        db.execSQL(sqlCreatePeersTable);
     }
 
     @Override
     public void updatePeerMessage(PeerMessage peerMessage) {
-        SQLiteDatabase db = getReadableDatabase();
+        SQLiteDatabase db = this.getReadableDatabase();
 
         String selectPeersQuery = "select * from peers where " +
                 COLUMNS[1] + " = " + "'" + peerMessage.getPeerName() + "'";
@@ -73,7 +78,7 @@ public class PeerDaoImpl extends SQLiteOpenHelper implements PeerDao {
             values.put(COLUMNS[3], peerMessage.getIpAddress());
             values.put(COLUMNS[4], peerMessage.getDateOfLastContact());
 
-            getWritableDatabase().update(TABLE_NAME, values, COLUMNS[1] + " = " + peerMessage.getPeerName(), null);
+            getWritableDatabase().update(TABLE_NAME, values, COLUMNS[1] + " = " + "'" + peerMessage.getPeerName() + "'", null);
         } else {
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS'Z'");
@@ -92,14 +97,14 @@ public class PeerDaoImpl extends SQLiteOpenHelper implements PeerDao {
 
     @Override
     public void deletePeer(String peerName) {
-        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase db = this.getWritableDatabase();
 
         db.delete(TABLE_NAME, COLUMNS[1] + " =" + peerName, null);
     }
 
     @Override
     public PeersAnswerMessage getAllPeers() {
-        SQLiteDatabase db = getReadableDatabase();
+        SQLiteDatabase db = this.getReadableDatabase();
 
         String getAllPeersQuery = "Select * FROM " + TABLE_NAME;
 
@@ -118,6 +123,12 @@ public class PeerDaoImpl extends SQLiteOpenHelper implements PeerDao {
         }
 
         return new PeersAnswerMessage(alPeersList);
+    }
+
+    public void deleteAll() {
+        // Delete everything from db and reset primary index
+        getWritableDatabase().execSQL("delete from " + TABLE_NAME);
+        getWritableDatabase().execSQL("Delete from sqlite_sequence where name='" + TABLE_NAME + "'");
     }
 
     private int indexOfColumn(String name) {

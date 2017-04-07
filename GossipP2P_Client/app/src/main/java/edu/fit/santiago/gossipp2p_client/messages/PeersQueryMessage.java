@@ -12,14 +12,13 @@ import edu.fit.santiago.gossipp2p_client.asn1.Encoder;
 
 public class PeersQueryMessage extends Message {
 
-
     @Override
     public Encoder getEncoder() {
         Encoder e = new Encoder().initSequence();
-        e.setNull().setASN1Type(Encoder.TAG_NULL);
+        e.addToSequence(new Encoder().getNullEncoder());
 
-        e.setASN1Type(Encoder.CLASS_APPLICATION, Encoder.PC_CONSTRUCTED, new BigInteger("3"));
-        return e;
+
+        return e.setASN1Type(Encoder.CLASS_APPLICATION, Encoder.PC_CONSTRUCTED, new BigInteger("3"));
     }
 
     @Override
@@ -32,6 +31,6 @@ public class PeersQueryMessage extends Message {
 //        peerMessage.peerName = d.getFirstObject(true).getString(Encoder.TAG_UTF8String);
 //        peerMessage.portNumber = d.getFirstObject(true).getInteger(Encoder.TAG_INTEGER).intValue();
 //        peerMessage.ipAddress = d.getFirstObject(true).getString(Encoder.TAG_PrintableString);
-        return d.getAny();
+        return new PeersQueryMessage();
     }
 }

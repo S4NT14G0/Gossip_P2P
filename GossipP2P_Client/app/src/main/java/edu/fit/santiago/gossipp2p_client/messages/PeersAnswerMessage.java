@@ -43,6 +43,7 @@ public class PeersAnswerMessage extends Message {
 
 	public PeersAnswerMessage() {
 		// TODO Auto-generated constructor stub
+		peers = new ArrayList<PeerMessage>();
 	}
 	
 	/**
@@ -80,8 +81,7 @@ public class PeersAnswerMessage extends Message {
 
 		e.addToSequence(Encoder.getEncoder(peers)).setASN1Type(Encoder.TAG_SEQUENCE);
 
-		e.setExplicitASN1Tag(Encoder.CLASS_CONTEXT, Encoder.PC_CONSTRUCTED, new BigInteger("1"));
-		return e;
+		return e.setExplicitASN1Tag(Encoder.CLASS_CONTEXT, Encoder.PC_CONSTRUCTED, new BigInteger("1"));
     }
 
     @Override
@@ -90,7 +90,7 @@ public class PeersAnswerMessage extends Message {
 
         Decoder d = dec.getContent();
 
-        peersAnswerMessage.peers = d.getSequenceOfAL(Encoder.TAG_SEQUENCE, new PeerMessage());
+        peersAnswerMessage.peers = d.getFirstObject(false).getSequenceOfAL(Encoder.TAG_SEQUENCE, new PeerMessage());
 
         return peersAnswerMessage;
     }

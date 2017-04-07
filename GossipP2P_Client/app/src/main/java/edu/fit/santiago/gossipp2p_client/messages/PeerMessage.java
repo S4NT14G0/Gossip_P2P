@@ -156,8 +156,8 @@ public class PeerMessage extends Message{
 
         e.addToSequence(new Encoder(ipAddress))
                 .setASN1Type(Encoder.TAG_PrintableString);
-        e.setASN1Type(Encoder.CLASS_APPLICATION, Encoder.PC_CONSTRUCTED, new BigInteger("2"));
-        return e;
+
+        return e.setASN1Type(Encoder.CLASS_APPLICATION, Encoder.PC_CONSTRUCTED, new BigInteger("2"));
     }
 
     @Override
@@ -166,9 +166,9 @@ public class PeerMessage extends Message{
 
         Decoder d = dec.getContent();
 
-        peerMessage.peerName = d.getFirstObject(true).getString(Encoder.TAG_UTF8String);
-        peerMessage.portNumber = d.getFirstObject(true).getInteger(Encoder.TAG_INTEGER).intValue();
-        peerMessage.ipAddress = d.getFirstObject(true).getString(Encoder.TAG_PrintableString);
+        peerMessage.peerName = d.getFirstObject(true).getString();
+        peerMessage.portNumber = d.getFirstObject(true).getInteger().intValue();
+        peerMessage.ipAddress = d.getFirstObject(true).getString();
 
         return peerMessage;
     }

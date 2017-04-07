@@ -3,6 +3,8 @@ package edu.fit.santiago.gossipp2p_client.socket_threads;
 import android.os.AsyncTask;
 import android.widget.TextView;
 
+import org.greenrobot.eventbus.util.AsyncExecutor;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -14,6 +16,11 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 
+import edu.fit.santiago.gossipp2p_client.asn1.Decoder;
+import edu.fit.santiago.gossipp2p_client.events.ServerResponseEvent;
+import edu.fit.santiago.gossipp2p_client.messages.Message;
+import edu.fit.santiago.gossipp2p_client.messages.PeersAnswerMessage;
+import edu.fit.santiago.gossipp2p_client.messages.ResponseMessage;
 import edu.fit.santiago.gossipp2p_client.models.ServerModel;
 
 /**
@@ -79,16 +86,15 @@ import edu.fit.santiago.gossipp2p_client.models.ServerModel;
 //    }
 //}
 public class UDPClientThread extends Thread {
-    String input;
-    BufferedReader reader;
-    OutputStreamWriter out;
-    TextView txtServerResponse;
+
+    boolean expectResponse;
     ServerModel serverModel;
     byte[] message;
 
-    public UDPClientThread (byte[] _message, ServerModel _serverModel) {
+    public UDPClientThread (byte[] _message, ServerModel _serverModel, boolean _expectResponse) {
         message = _message;
         serverModel = _serverModel;
+        expectResponse = _expectResponse;
     }
 
     public void run () {
@@ -96,18 +102,27 @@ public class UDPClientThread extends Thread {
         try {
 
             DatagramSocket ds = new DatagramSocket();
-            byte[] data = new byte[1000];
-            data = (message + "\n").getBytes();
-            DatagramPacket packet = new DatagramPacket (data, data.length, InetAddress.getByName(serverModel.getIpAddress()), serverModel.getPort());
+            DatagramPacket packet = new DatagramPacket (message, message.length, InetAddress.getByName(serverModel.getIpAddress()), serverModel.getPort());
             ds.send(packet);
 
-            byte buffer[] = new byte[1000];
+            if (expectResponse) {
+                byte buffer[] = new byte[1000];
+                DatagramPacket incomingPacket = new DatagramPacket(buffer, buffer.length);
+                ds.receive(incomingPacket);     // Receive packet from client
 
-            //DatagramPacket incomingPacket = new DatagramPacket(buffer, buffer.length);
-            //ds.receive(incomingPacket);     // Receive packet from client
-            // Get the string message out of the datagram packet
-            //String input = new String(incomingPacket.getData(), "UTF-8");
-            //serverResponse.append(input);
+                Decoder decoder = new Decoder(incomingPacket.getData(), incomingPacket.getOffset(), incomingPacket.getLength());
+
+                Message unidentifiedMessage = Message.identifyMessage(decoder);
+
+                if (unidentifiedMessage instanceof PeersAnswerMessage) {
+                    PeersAnswerMessage peersAnswerMessage = (PeersAnswerMessage) unidentifiedMessage;
+                    ServerResponseEvent.postEventBusMessage(peersAnswerMessage.toString());
+                } else if (unidentifiedMessage instanceof ResponseMessage) {
+                    ResponseMessage responseMessage = (ResponseMessage) unidentifiedMessage;
+                    ServerResponseEvent.postEventBusMessage(responseMessage.toString());
+                }
+            }
+
             ds.close();
 
         } catch (Exception e) {

@@ -19,7 +19,9 @@ package edu.fit.santiago.gossipp2p_client.messages;/* --------------------------
 /* ------------------------------------------------------------------------- */
 
 
+import edu.fit.santiago.gossipp2p_client.asn1.ASN1DecoderFail;
 import edu.fit.santiago.gossipp2p_client.asn1.ASNObj;
+import edu.fit.santiago.gossipp2p_client.asn1.Decoder;
 
 /**
  * Super class that represents messages received by the server
@@ -67,4 +69,34 @@ public abstract class Message extends ASNObj {
 		
 		return new ErrorMessage();
 	}
+
+	public static Message identifyMessage (Decoder decoder) throws ASN1DecoderFail {
+        if (decoder.tagVal() == 1) {
+            if (decoder.typeClass() == 1) {
+                GossipMessage gossipMessage = (GossipMessage) new GossipMessage().decode(decoder);
+                return gossipMessage;
+            } else {
+                PeersAnswerMessage peersAnswerMessage = (PeersAnswerMessage) new PeersAnswerMessage().decode(decoder);
+                return peersAnswerMessage;
+            }
+        }
+
+        if (decoder.tagVal() == 2) {
+            PeerMessage peerMessage = (PeerMessage) new PeerMessage().decode(decoder);
+            return peerMessage;
+        }
+
+        if (decoder.tagVal() == 3) {
+            Object peersQueryObj = new PeersQueryMessage().decode(decoder);
+            PeersQueryMessage peersQueryMessage = (PeersQueryMessage) peersQueryObj;
+            return peersQueryMessage;
+        }
+
+        if (decoder.tagVal() == 4) {
+            ResponseMessage responseMessage = (ResponseMessage) new ResponseMessage().decode(decoder);
+            return  responseMessage;
+        }
+
+        return new ErrorMessage();
+    }
 }

@@ -136,8 +136,9 @@ public class GossipMessage extends Message {
 
         e.addToSequence(new Encoder(message))
         .setASN1Type(Encoder.TAG_UTF8String);
-        e.setExplicitASN1Tag(Encoder.CLASS_APPLICATION, Encoder.PC_CONSTRUCTED, new BigInteger("1"));
-        return e;
+
+
+        return e.setExplicitASN1Tag(Encoder.CLASS_APPLICATION, Encoder.PC_CONSTRUCTED, new BigInteger("1"));
     }
 
     @Override
@@ -147,8 +148,8 @@ public class GossipMessage extends Message {
         try {
             Decoder d = dec.getContent();
 
-            gossipMessage.sha256EncodedMessage = d.getFirstObject(true).getString(Encoder.TAG_OCTET_STRING);
-            gossipMessage.messageDate = sdf.parse(d.getFirstObject(true).getGeneralizedTime(Encoder.TAG_GeneralizedTime));
+            gossipMessage.sha256EncodedMessage = d.getFirstObject(true).getString();
+            gossipMessage.messageDate = d.getFirstObject(true).getGeneralizedTimeCalenderAnyType().getTime();
             gossipMessage.message = d.getFirstObject(true).getString(Encoder.TAG_UTF8String);
 
         } catch (Exception e) {

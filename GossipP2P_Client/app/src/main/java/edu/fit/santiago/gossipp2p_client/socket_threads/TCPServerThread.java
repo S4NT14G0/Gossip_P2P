@@ -1,21 +1,16 @@
 package edu.fit.santiago.gossipp2p_client.socket_threads;
 
-import android.os.AsyncTask;
-import android.util.Log;
-import android.widget.TextView;
-
-import org.greenrobot.eventbus.EventBus;
-
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InterruptedIOException;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import edu.fit.santiago.gossipp2p_client.asn1.Decoder;
 import edu.fit.santiago.gossipp2p_client.events.IncomingServerMessageEvent;
+import edu.fit.santiago.gossipp2p_client.messages.Message;
+import edu.fit.santiago.gossipp2p_client.messages.TCPServerMessageHandler;
 
 /**
  * Thread for client to connect to server using TCP
@@ -45,36 +40,36 @@ public class TCPServerThread extends Thread {
             out = sock.getOutputStream();
 
             // Print to console to show which port we're connected too
-            postEventBusMessage("Handling client at " +
+            IncomingServerMessageEvent.postEventBusMessage("Handling client at " +
                     sock.getInetAddress().getHostAddress() + " on port " +
                     sock.getPort());
 
-            String input = "";
+            int messageLen = in.read(byteBuffer);
+            if (messageLen <= 0) return;
 
-            while ((recvMsgSize = in.read(byteBuffer)) != -1) {
-                input = new String(byteBuffer, "UTF-8").replace("\n", "").trim();
-                postEventBusMessage(input);
-                byteBuffer = new byte[1024];
-                out.write((input + "\n").getBytes());
-                out.flush();
+            Decoder decoder = new Decoder(byteBuffer, 0, messageLen);
+
+            if (!decoder.fetchAll(in)) {
+                IncomingServerMessageEvent.postEventBusMessage("Buffer too small or stream closed");
+                return;
             }
+
+            Message unidentifiedMessage = Message.identifyMessage(decoder);
+
+            new TCPServerMessageHandler().handleMessage(unidentifiedMessage, out);
+
         }
         // Exception thrown when network timeout occurs
-        catch (InterruptedIOException iioe)
+        catch (InterruptedIOException oe)
         {
             try {
                 sock.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            postEventBusMessage ("Remote host timed out during read operation");
+            IncomingServerMessageEvent.postEventBusMessage ("Remote host timed out during read operation");
         }catch (Exception e) {
             e.printStackTrace();
         }
     }
-
-    private void postEventBusMessage (String message) {
-        EventBus.getDefault().post(new IncomingServerMessageEvent(message));
-    }
-
 }

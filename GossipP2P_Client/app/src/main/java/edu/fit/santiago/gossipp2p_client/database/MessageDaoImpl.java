@@ -24,6 +24,10 @@ public class MessageDaoImpl extends SQLiteOpenHelper implements MessageDao {
         super(context, DB_NAME, null, VERSION);
     }
 
+    public MessageDaoImpl (Context context) {
+        super(context, DB_NAME, null, VERSION);
+    }
+
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         VERSION = newVersion;
@@ -33,17 +37,23 @@ public class MessageDaoImpl extends SQLiteOpenHelper implements MessageDao {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        createTables();
+        createTables(db);
     }
 
-    private void createTables () {
+    private void createTables (SQLiteDatabase db) {
         String sqlCreatePeersTable = "CREATE TABLE IF NOT EXISTS peers("
                 + COLUMNS[0] + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + COLUMNS[1] + " string,"
                 + COLUMNS[2] + " string,"
                 + COLUMNS[3] + " string);";
 
-        getWritableDatabase().execSQL(sqlCreatePeersTable);
+        db.execSQL(sqlCreatePeersTable);
+    }
+
+    public void deleteAll() {
+        // Delete everything from db and reset primary index
+        getWritableDatabase().execSQL("delete from " + TABLE_NAME);
+        getWritableDatabase().execSQL("Delete from sqlite_sequence where name='" + TABLE_NAME + "'");
     }
 
     @Override
@@ -56,6 +66,7 @@ public class MessageDaoImpl extends SQLiteOpenHelper implements MessageDao {
 
         getWritableDatabase().insert(TABLE_NAME, null, values);
     }
+
 
     @Override
     public boolean isExistingMessage(GossipMessage gossipMessage) {
