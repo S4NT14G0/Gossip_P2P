@@ -65,6 +65,7 @@ public class TCPClientThread extends Thread {
                 Message unidentifiedMessage = Message.identifyMessage(decoder);
 
                 if (unidentifiedMessage instanceof PeersAnswerMessage) {
+
                     PeersAnswerMessage peersAnswerMessage = (PeersAnswerMessage) unidentifiedMessage;
                     ServerResponseEvent.postEventBusMessage(peersAnswerMessage.toString());
                 } else if (unidentifiedMessage instanceof ResponseMessage) {

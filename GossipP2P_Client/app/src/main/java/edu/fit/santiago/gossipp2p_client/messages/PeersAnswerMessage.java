@@ -85,13 +85,12 @@ public class PeersAnswerMessage extends Message {
     }
 
     @Override
-    public Object decode(Decoder dec) throws ASN1DecoderFail {
-        PeersAnswerMessage peersAnswerMessage = new PeersAnswerMessage();
+    public PeersAnswerMessage decode(Decoder dec) throws ASN1DecoderFail {
 
-        Decoder d = dec.getContent();
+        Decoder d = dec.getContent().getContent();
 
-        peersAnswerMessage.peers = d.getFirstObject(false).getSequenceOfAL(Encoder.TAG_SEQUENCE, new PeerMessage());
+        peers = d.getFirstObject(false).getSequenceOfAL(PeerMessage.getType(), new PeerMessage());
 
-        return peersAnswerMessage;
+        return this;
     }
 }

@@ -128,7 +128,7 @@ public class GossipMessage extends Message {
     public Encoder getEncoder() {
         Encoder e = new Encoder().initSequence();
 
-        e.addToSequence(new Encoder(sha256EncodedMessage))
+        e.addToSequence(new Encoder(sha256EncodedMessage.getBytes()))
         .setASN1Type(Encoder.TAG_OCTET_STRING);
 
         e.addToSequence(new Encoder(toCalendar(this.messageDate))
@@ -142,21 +142,20 @@ public class GossipMessage extends Message {
     }
 
     @Override
-    public Object decode(Decoder dec) throws ASN1DecoderFail {
-        GossipMessage gossipMessage = new GossipMessage();
+    public GossipMessage decode(Decoder dec) throws ASN1DecoderFail {
 
         try {
-            Decoder d = dec.getContent();
+            Decoder d = dec.getContent().getContent();
 
-            gossipMessage.sha256EncodedMessage = d.getFirstObject(true).getString();
-            gossipMessage.messageDate = d.getFirstObject(true).getGeneralizedTimeCalenderAnyType().getTime();
-            gossipMessage.message = d.getFirstObject(true).getString(Encoder.TAG_UTF8String);
+            sha256EncodedMessage = new String(d.getFirstObject(true).getBytes());
+            messageDate = d.getFirstObject(true).getGeneralizedTimeCalenderAnyType().getTime();
+            message = d.getFirstObject(true).getString(Encoder.TAG_UTF8String);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return gossipMessage;
+        return this;
     }
 
     private Calendar toCalendar(Date date){

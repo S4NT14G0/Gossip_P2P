@@ -4,9 +4,13 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import edu.fit.santiago.gossipp2p_client.MyApplication;
+import edu.fit.santiago.gossipp2p_client.asn1.ASN1DecoderFail;
+import edu.fit.santiago.gossipp2p_client.asn1.Decoder;
+import edu.fit.santiago.gossipp2p_client.asn1.Encoder;
 import edu.fit.santiago.gossipp2p_client.database.MessageDaoImpl;
 import edu.fit.santiago.gossipp2p_client.database.PeerDaoImpl;
 import edu.fit.santiago.gossipp2p_client.events.IncomingServerMessageEvent;
+import edu.fit.santiago.gossipp2p_client.events.ServerResponseEvent;
 import edu.fit.santiago.gossipp2p_client.models.ServerModel;
 import edu.fit.santiago.gossipp2p_client.socket_threads.TCPClientThread;
 import edu.fit.santiago.gossipp2p_client.socket_threads.UDPClientThread;
@@ -17,7 +21,7 @@ import edu.fit.santiago.gossipp2p_client.socket_threads.UDPClientThread;
 
 public class TCPServerMessageHandler {
 
-    public void handleMessage (Message message, OutputStream out) throws IOException {
+    public void handleMessage (Message message, OutputStream out) throws IOException, ASN1DecoderFail {
         if (message instanceof GossipMessage) {
             handleGossipMessage((GossipMessage) message, out);
         } else if (message instanceof PeerMessage) {
@@ -40,6 +44,7 @@ public class TCPServerMessageHandler {
         MessageDaoImpl messageDaoImpl = new MessageDaoImpl(MyApplication.getAppContext());
 
         if (!messageDaoImpl.isExistingMessage(gossipMessage)) {
+            messageDaoImpl.insertGossipMessage(gossipMessage);
             PeersAnswerMessage peersAnswerMessage = new PeerDaoImpl(MyApplication.getAppContext()).getAllPeers();
 
              for(PeerMessage peer : peersAnswerMessage.peers) {
@@ -68,14 +73,15 @@ public class TCPServerMessageHandler {
 
     }
 
-    private void handlePeersQueryMessage (OutputStream out) throws IOException {
+    private void handlePeersQueryMessage (OutputStream out) throws IOException, ASN1DecoderFail {
         IncomingServerMessageEvent.postEventBusMessage("Received Peer Query Message");
 
         // Send a Peers Answer message back to client on OutputStream
         // Update or insert peer into database
         PeerDaoImpl peerDaoImpl = new PeerDaoImpl(MyApplication.getAppContext());
-
-        out.write(peerDaoImpl.getAllPeers().encode());
+        byte[] e = peerDaoImpl.getAllPeers().encode();
+        
+        out.write(e);
         out.flush();
     }
 

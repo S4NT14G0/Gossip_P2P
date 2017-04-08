@@ -143,7 +143,9 @@ public class PeerMessage extends Message{
     }
 
     public String getDateOfLastContact () {return this.dateOfLastContact;}
-
+    public static byte getType() {
+        return Encoder.buildASN1byteType(Encoder.CLASS_APPLICATION, Encoder.PC_CONSTRUCTED, (byte)2);
+    }
     @Override
     public Encoder getEncoder() {
         Encoder e = new Encoder().initSequence();
@@ -161,15 +163,17 @@ public class PeerMessage extends Message{
     }
 
     @Override
-    public Object decode(Decoder dec) throws ASN1DecoderFail {
-        PeerMessage peerMessage = new PeerMessage();
+    public PeerMessage decode(Decoder dec) throws ASN1DecoderFail {
 
         Decoder d = dec.getContent();
 
-        peerMessage.peerName = d.getFirstObject(true).getString();
-        peerMessage.portNumber = d.getFirstObject(true).getInteger().intValue();
-        peerMessage.ipAddress = d.getFirstObject(true).getString();
+        peerName = d.getFirstObject(true).getString();
+        portNumber = d.getFirstObject(true).getInteger().intValue();
+        ipAddress = d.getFirstObject(true).getString();
 
-        return peerMessage;
+        return this;
+    }
+    public PeerMessage instance() {
+        return new PeerMessage();
     }
 }

@@ -40,7 +40,7 @@ public class MessageDaoImpl extends SQLiteOpenHelper implements MessageDao {
         createTables(db);
     }
 
-    private void createTables (SQLiteDatabase db) {
+    private synchronized void createTables (SQLiteDatabase db) {
         String sqlCreatePeersTable = "CREATE TABLE IF NOT EXISTS peers("
                 + COLUMNS[0] + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + COLUMNS[1] + " string,"
@@ -50,14 +50,14 @@ public class MessageDaoImpl extends SQLiteOpenHelper implements MessageDao {
         db.execSQL(sqlCreatePeersTable);
     }
 
-    public void deleteAll() {
+    public synchronized void deleteAll() {
         // Delete everything from db and reset primary index
         getWritableDatabase().execSQL("delete from " + TABLE_NAME);
         getWritableDatabase().execSQL("Delete from sqlite_sequence where name='" + TABLE_NAME + "'");
     }
 
     @Override
-    public void insertGossipMessage(GossipMessage gossipMessage) {
+    public synchronized void insertGossipMessage(GossipMessage gossipMessage) {
         // Insert Gossip Message
         ContentValues values = new ContentValues();
         values.put(COLUMNS[1], gossipMessage.getSha256EncodedMessage());
@@ -69,7 +69,7 @@ public class MessageDaoImpl extends SQLiteOpenHelper implements MessageDao {
 
 
     @Override
-    public boolean isExistingMessage(GossipMessage gossipMessage) {
+    public synchronized boolean isExistingMessage(GossipMessage gossipMessage) {
         SQLiteDatabase db = getReadableDatabase();
 
         String selectPeersQuery = "select * from peers where " +

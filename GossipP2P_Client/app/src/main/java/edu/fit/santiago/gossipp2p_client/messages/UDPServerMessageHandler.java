@@ -42,6 +42,7 @@ public class UDPServerMessageHandler {
         MessageDaoImpl messageDaoImpl = new MessageDaoImpl(MyApplication.getAppContext());
 
         if (!messageDaoImpl.isExistingMessage(gossipMessage)) {
+            messageDaoImpl.insertGossipMessage(gossipMessage);
             PeersAnswerMessage peersAnswerMessage = new PeerDaoImpl(MyApplication.getAppContext()).getAllPeers();
 
             for(PeerMessage peer : peersAnswerMessage.peers) {
