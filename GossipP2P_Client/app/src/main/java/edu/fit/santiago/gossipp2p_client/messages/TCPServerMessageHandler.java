@@ -22,12 +22,15 @@ import edu.fit.santiago.gossipp2p_client.socket_threads.UDPClientThread;
 public class TCPServerMessageHandler {
 
     public void handleMessage (Message message, OutputStream out) throws IOException, ASN1DecoderFail {
+
         if (message instanceof GossipMessage) {
             handleGossipMessage((GossipMessage) message, out);
         } else if (message instanceof PeerMessage) {
             handlePeerMessage((PeerMessage) message, out);
         } else if (message instanceof PeersQueryMessage) {
             handlePeersQueryMessage(out);
+        } else if (message instanceof LeaveMessage) {
+            handleLeaveMessage((LeaveMessage) message, out);
         }
     }
 
@@ -85,4 +88,16 @@ public class TCPServerMessageHandler {
         out.flush();
     }
 
+    private void handleLeaveMessage (LeaveMessage leaveMessage, OutputStream out) throws IOException {
+        IncomingServerMessageEvent.postEventBusMessage(leaveMessage.toString());
+        ResponseMessage responseMessage = new ResponseMessage("Received Leave Message");
+
+        out.write(responseMessage.encode());
+        out.flush();
+
+        // Remove peer from db
+        PeerDaoImpl peerDaoImpl = new PeerDaoImpl(MyApplication.getAppContext());
+
+        peerDaoImpl.deletePeer(leaveMessage.getName());
+    }
 }

@@ -88,6 +88,8 @@ public class AddPeerActivity extends AppCompatActivity {
             }
         });
 
+        final Button btnLeaveMessage = (Button) findViewById(R.id.btnLeaveMessage);
+
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

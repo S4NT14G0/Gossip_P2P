@@ -26,6 +26,8 @@ public class UDPServerMessageHandler {
             handlePeerMessage((PeerMessage) message, ds, clientAddress, port);
         } else if (message instanceof PeersQueryMessage) {
             handlePeersQueryMessage(ds, clientAddress, port);
+        } else if (message instanceof LeaveMessage) {
+            handleLeaveMessage ((LeaveMessage) message, ds, clientAddress, port);
         }
     }
 
@@ -68,8 +70,6 @@ public class UDPServerMessageHandler {
         // Update or insert peer into database
         PeerDaoImpl peerDaoImpl = new PeerDaoImpl(MyApplication.getAppContext());
         peerDaoImpl.updatePeerMessage(peerMessage);
-
-
     }
 
     private void handlePeersQueryMessage (DatagramSocket ds, InetAddress clientAddress, int port) throws IOException {
@@ -82,5 +82,19 @@ public class UDPServerMessageHandler {
         byte[] responseBytes = peerDaoImpl.getAllPeers().encode();
         DatagramPacket datagramPacket = new DatagramPacket(responseBytes, responseBytes.length, clientAddress, port);
         ds.send(datagramPacket);
+    }
+
+    private void handleLeaveMessage (LeaveMessage leaveMessage, DatagramSocket ds, InetAddress clientAddress, int port) throws IOException {
+        IncomingServerMessageEvent.postEventBusMessage(leaveMessage.toString());
+        ResponseMessage responseMessage = new ResponseMessage("Received Leave Message");
+
+        byte[] responseBytes = responseMessage.encode();
+        DatagramPacket datagramPacket = new DatagramPacket(responseBytes, responseBytes.length, clientAddress, port);
+        ds.send(datagramPacket);
+
+        // Remove peer from db
+        PeerDaoImpl peerDaoImpl = new PeerDaoImpl(MyApplication.getAppContext());
+
+        peerDaoImpl.deletePeer(leaveMessage.getName());
     }
 }

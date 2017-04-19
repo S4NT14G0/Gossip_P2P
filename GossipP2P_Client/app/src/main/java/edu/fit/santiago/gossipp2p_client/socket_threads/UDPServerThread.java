@@ -4,8 +4,12 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 
+import edu.fit.santiago.gossipp2p_client.MyApplication;
 import edu.fit.santiago.gossipp2p_client.asn1.Decoder;
+import edu.fit.santiago.gossipp2p_client.database.PeerDao;
+import edu.fit.santiago.gossipp2p_client.database.PeerDaoImpl;
 import edu.fit.santiago.gossipp2p_client.messages.Message;
+import edu.fit.santiago.gossipp2p_client.messages.PeerMessage;
 import edu.fit.santiago.gossipp2p_client.messages.UDPServerMessageHandler;
 import edu.fit.santiago.gossipp2p_client.models.ServerModel;
 
@@ -33,6 +37,17 @@ public class UDPServerThread extends Thread {
                 Decoder decoder = new Decoder(packet.getData(), packet.getOffset(), packet.getLength());
 
                 Message unidentifiedMessage = Message.identifyMessage(decoder);
+
+                // Check if peer is known
+                PeerDaoImpl peerDaoImpl = new PeerDaoImpl(MyApplication.getAppContext());
+                PeerMessage peerMessage = peerDaoImpl.findPeerByInetAddress(packet.getAddress().getAddress().toString(), packet.getPort());
+
+                // If we know this peer update it's last seen time
+                if (peerMessage != null) {
+                    peerMessage.peerContactRecieved();
+                    // Update the peer's contact date in db
+                    peerDaoImpl.updatePeerMessage(peerMessage);
+                }
 
                 new UDPServerMessageHandler().handleMessage(unidentifiedMessage, dgSocket, packet.getAddress(), packet.getPort());
             }

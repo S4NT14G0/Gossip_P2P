@@ -93,8 +93,13 @@ public abstract class Message extends ASNObj {
         }
 
         if (decoder.tagVal() == 4) {
-            ResponseMessage responseMessage = (ResponseMessage) new ResponseMessage().decode(decoder);
-            return  responseMessage;
+			if (decoder.typeClass() == 1) {
+				LeaveMessage leaveMessage = (LeaveMessage) new LeaveMessage().decode(decoder);
+				return leaveMessage;
+			} else {
+				ResponseMessage responseMessage = (ResponseMessage) new ResponseMessage().decode(decoder);
+				return  responseMessage;
+			}
         }
 
         return new ErrorMessage();

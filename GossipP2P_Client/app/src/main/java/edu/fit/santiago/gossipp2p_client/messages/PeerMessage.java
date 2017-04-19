@@ -143,6 +143,16 @@ public class PeerMessage extends Message{
     }
 
     public String getDateOfLastContact () {return this.dateOfLastContact;}
+
+    public void peerContactRecieved () {
+        // Get the current date and time
+        final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS'Z'");
+        Date currentDateTime = new Date();
+        String date = sdf.format(currentDateTime);
+
+        this.dateOfLastContact = date;
+    }
+
     public static byte getType() {
         return Encoder.buildASN1byteType(Encoder.CLASS_APPLICATION, Encoder.PC_CONSTRUCTED, (byte)2);
     }

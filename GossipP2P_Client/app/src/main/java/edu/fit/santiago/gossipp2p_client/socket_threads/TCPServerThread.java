@@ -7,9 +7,12 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import edu.fit.santiago.gossipp2p_client.MyApplication;
 import edu.fit.santiago.gossipp2p_client.asn1.Decoder;
+import edu.fit.santiago.gossipp2p_client.database.PeerDaoImpl;
 import edu.fit.santiago.gossipp2p_client.events.IncomingServerMessageEvent;
 import edu.fit.santiago.gossipp2p_client.messages.Message;
+import edu.fit.santiago.gossipp2p_client.messages.PeerMessage;
 import edu.fit.santiago.gossipp2p_client.messages.TCPServerMessageHandler;
 
 /**
@@ -55,6 +58,17 @@ public class TCPServerThread extends Thread {
             }
 
             Message unidentifiedMessage = Message.identifyMessage(decoder);
+
+            // Check if peer is known
+            PeerDaoImpl peerDaoImpl = new PeerDaoImpl(MyApplication.getAppContext());
+            PeerMessage peerMessage = peerDaoImpl.findPeerByInetAddress(sock.getInetAddress().getAddress().toString(), sock.getPort());
+
+            // If we know this peer update it's last seen time
+            if (peerMessage != null) {
+                peerMessage.peerContactRecieved();
+                // Update the peer's contact date in db
+                peerDaoImpl.updatePeerMessage(peerMessage);
+            }
 
             new TCPServerMessageHandler().handleMessage(unidentifiedMessage, out);
 
