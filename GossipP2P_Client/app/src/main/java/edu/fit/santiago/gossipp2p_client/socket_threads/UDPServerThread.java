@@ -40,7 +40,7 @@ public class UDPServerThread extends Thread {
 
                 // Check if peer is known
                 PeerDaoImpl peerDaoImpl = new PeerDaoImpl(MyApplication.getAppContext());
-                PeerMessage peerMessage = peerDaoImpl.findPeerByInetAddress(packet.getAddress().getAddress().toString(), packet.getPort());
+                PeerMessage peerMessage = peerDaoImpl.findPeerByInetAddress(packet.getAddress().getHostAddress(), packet.getPort());
 
                 // If we know this peer update it's last seen time
                 if (peerMessage != null) {

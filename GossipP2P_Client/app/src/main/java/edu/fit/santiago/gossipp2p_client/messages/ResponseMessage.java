@@ -27,7 +27,7 @@ public class ResponseMessage extends  Message {
                 .setASN1Type(Encoder.TAG_UTF8String);
 
 
-        return e.setASN1Type(Encoder.CLASS_APPLICATION, Encoder.PC_CONSTRUCTED, new BigInteger("4"));
+        return e.setASN1Type(Encoder.CLASS_APPLICATION, Encoder.PC_CONSTRUCTED, new BigInteger("5"));
     }
 
     @Override

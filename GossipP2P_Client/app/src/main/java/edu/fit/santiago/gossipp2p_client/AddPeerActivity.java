@@ -17,6 +17,7 @@ import java.util.Date;
 
 import edu.fit.santiago.gossipp2p_client.events.ServerResponseEvent;
 import edu.fit.santiago.gossipp2p_client.messages.GossipMessage;
+import edu.fit.santiago.gossipp2p_client.messages.LeaveMessage;
 import edu.fit.santiago.gossipp2p_client.messages.PeerMessage;
 import edu.fit.santiago.gossipp2p_client.messages.PeersQueryMessage;
 import edu.fit.santiago.gossipp2p_client.models.ServerModel;
@@ -90,6 +91,22 @@ public class AddPeerActivity extends AppCompatActivity {
 
         final Button btnLeaveMessage = (Button) findViewById(R.id.btnLeaveMessage);
 
+        btnLeaveMessage.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                EditText peerRemovedName = (EditText) findViewById(R.id.etRemovePeer);
+                String peerName = peerRemovedName.getText().toString();
+
+                LeaveMessage leaveMessage = new LeaveMessage();
+                leaveMessage.setName(peerName);
+
+                if (serverModel.getConnectionType() == 1)
+                    sendPeerMessageTCP(leaveMessage.encode());
+                else
+                    sendPeerMessageUDP(leaveMessage.encode());
+            }
+        });
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

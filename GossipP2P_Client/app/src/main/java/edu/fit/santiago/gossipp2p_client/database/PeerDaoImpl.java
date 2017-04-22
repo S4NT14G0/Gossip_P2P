@@ -99,7 +99,7 @@ public class PeerDaoImpl extends SQLiteOpenHelper implements PeerDao {
     public synchronized void deletePeer(String peerName) {
         SQLiteDatabase db = this.getWritableDatabase();
 
-        db.delete(TABLE_NAME, COLUMNS[1] + " =" + peerName, null);
+        db.delete(TABLE_NAME, COLUMNS[1] + " = '" + peerName + "'", null);
     }
 
     @Override
@@ -129,7 +129,7 @@ public class PeerDaoImpl extends SQLiteOpenHelper implements PeerDao {
     public PeerMessage findPeerByInetAddress(String ipAddress, int port) {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        String query = "Select * FROM " + TABLE_NAME + " where " + COLUMNS[3] + " == " + ipAddress + " and " + COLUMNS[2] + " == " + port + ";";
+        String query = "Select * FROM " + TABLE_NAME + " where " + COLUMNS[3] + " = '" + ipAddress + "' and " + COLUMNS[2] + " = " + port + ";";
         Cursor cursor = db.rawQuery(query, null);
 
         PeerMessage peerMessage = new PeerMessage();

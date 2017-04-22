@@ -61,7 +61,7 @@ public class TCPServerThread extends Thread {
 
             // Check if peer is known
             PeerDaoImpl peerDaoImpl = new PeerDaoImpl(MyApplication.getAppContext());
-            PeerMessage peerMessage = peerDaoImpl.findPeerByInetAddress(sock.getInetAddress().getAddress().toString(), sock.getPort());
+            PeerMessage peerMessage = peerDaoImpl.findPeerByInetAddress(sock.getInetAddress().getHostAddress(), sock.getPort());
 
             // If we know this peer update it's last seen time
             if (peerMessage != null) {

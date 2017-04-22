@@ -59,6 +59,13 @@
             android:layout_height="match_parent"
             android:text="Query Peers"/>
 
+            <EditText
+                android:id="@+id/etRemovePeer"
+                android:layout_width="match_parent"
+                android:minWidth="185dp"
+                android:layout_height="match_parent"
+                android:hint="Peer to remove"/>
+
             <Button
                 android:id="@+id/btnLeaveMessage"
                 android:layout_width="match_parent"
