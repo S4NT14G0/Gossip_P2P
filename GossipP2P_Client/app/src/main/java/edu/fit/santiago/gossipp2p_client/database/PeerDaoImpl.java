@@ -126,13 +126,32 @@ public class PeerDaoImpl extends SQLiteOpenHelper implements PeerDao {
     }
 
     @Override
+    public synchronized PeerMessage getPeerByName (String name) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String query = "Select * FROM " + TABLE_NAME + " where " + COLUMNS[1] + " = '" + name + "'";
+
+        Cursor cursor = db.rawQuery(query, null);
+
+        if (cursor.moveToNext() && cursor != null) {
+            int id = cursor.getInt(cursor.getColumnIndex(COLUMNS[0]));
+            String _name = cursor.getString(cursor.getColumnIndex(COLUMNS[1]));
+            int peerPort = cursor.getInt(cursor.getColumnIndex(COLUMNS[2]));
+            String peerIpAddress = cursor.getString(cursor.getColumnIndex(COLUMNS[3]));
+            String date = cursor.getString(cursor.getColumnIndex(COLUMNS[4]));
+
+            return new PeerMessage(_name, peerPort, peerIpAddress, date);
+        }
+
+        return null;
+    }
+
+    @Override
     public PeerMessage findPeerByInetAddress(String ipAddress, int port) {
         SQLiteDatabase db = this.getReadableDatabase();
 
         String query = "Select * FROM " + TABLE_NAME + " where " + COLUMNS[3] + " = '" + ipAddress + "' and " + COLUMNS[2] + " = " + port + ";";
         Cursor cursor = db.rawQuery(query, null);
-
-        PeerMessage peerMessage = new PeerMessage();
 
         if (cursor.moveToNext() && cursor != null) {
             int id = cursor.getInt(cursor.getColumnIndex(COLUMNS[0]));

@@ -62,6 +62,8 @@ public class AddPeerActivity extends AppCompatActivity {
 
                 // Build peer message
                 PeerMessage peerMessage = new PeerMessage(peerName, peerPort, peerAddress);
+                // Set the date of the peer
+                peerMessage.peerContactRecieved();
 
                 // Send the message
                 if (serverModel.getConnectionType() == 1) {

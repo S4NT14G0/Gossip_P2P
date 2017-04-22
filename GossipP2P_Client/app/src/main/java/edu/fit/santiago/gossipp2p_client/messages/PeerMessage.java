@@ -22,6 +22,8 @@
 package edu.fit.santiago.gossipp2p_client.messages;
 
 import java.math.BigInteger;
+import java.net.DatagramSocket;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -143,6 +145,11 @@ public class PeerMessage extends Message{
     }
 
     public String getDateOfLastContact () {return this.dateOfLastContact;}
+
+    public Date getDateTypeOfLastContact () throws ParseException {
+        Date date = sdf.parse(this.dateOfLastContact);
+        return date;
+    }
 
     public void peerContactRecieved () {
         // Get the current date and time
