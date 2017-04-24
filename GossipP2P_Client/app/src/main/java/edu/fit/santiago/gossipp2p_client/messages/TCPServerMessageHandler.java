@@ -11,6 +11,7 @@ import edu.fit.santiago.gossipp2p_client.database.MessageDaoImpl;
 import edu.fit.santiago.gossipp2p_client.database.PeerDaoImpl;
 import edu.fit.santiago.gossipp2p_client.events.IncomingServerMessageEvent;
 import edu.fit.santiago.gossipp2p_client.events.ServerResponseEvent;
+import edu.fit.santiago.gossipp2p_client.models.PeerManager;
 import edu.fit.santiago.gossipp2p_client.models.ServerModel;
 import edu.fit.santiago.gossipp2p_client.socket_threads.TCPClientThread;
 import edu.fit.santiago.gossipp2p_client.socket_threads.UDPClientThread;
@@ -69,11 +70,12 @@ public class TCPServerMessageHandler {
         out.write(responseMessage.encode());
         out.flush();
 
+        peerMessage.peerContactRecieved();
         // Update or insert peer into database
         PeerDaoImpl peerDaoImpl = new PeerDaoImpl(MyApplication.getAppContext());
         peerDaoImpl.updatePeerMessage(peerMessage);
 
-
+        PeerManager.startPeerTimeout(peerMessage);
     }
 
     private void handlePeersQueryMessage (OutputStream out) throws IOException, ASN1DecoderFail {

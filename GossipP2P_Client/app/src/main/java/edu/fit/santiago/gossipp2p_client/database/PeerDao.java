@@ -11,6 +11,6 @@ public interface PeerDao {
     public void updatePeerMessage (PeerMessage _peerMessage);
     public void deletePeer (String peerName);
     public PeersAnswerMessage getAllPeers();
-    public PeerMessage findPeerByInetAddress (String ipAddress, int port);
+    public PeerMessage findPeerByInetAddress (String ipAddress);
     public PeerMessage getPeerByName (String name);
 }

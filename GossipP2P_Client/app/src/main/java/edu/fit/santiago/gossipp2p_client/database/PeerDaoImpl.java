@@ -147,10 +147,10 @@ public class PeerDaoImpl extends SQLiteOpenHelper implements PeerDao {
     }
 
     @Override
-    public PeerMessage findPeerByInetAddress(String ipAddress, int port) {
+    public PeerMessage findPeerByInetAddress(String ipAddress) {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        String query = "Select * FROM " + TABLE_NAME + " where " + COLUMNS[3] + " = '" + ipAddress + "' and " + COLUMNS[2] + " = " + port + ";";
+        String query = "Select * FROM " + TABLE_NAME + " where " + COLUMNS[3] + " = '" + ipAddress + "';";
         Cursor cursor = db.rawQuery(query, null);
 
         if (cursor.moveToNext() && cursor != null) {

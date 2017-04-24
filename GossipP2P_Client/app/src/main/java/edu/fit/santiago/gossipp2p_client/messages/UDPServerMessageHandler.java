@@ -9,6 +9,7 @@ import edu.fit.santiago.gossipp2p_client.MyApplication;
 import edu.fit.santiago.gossipp2p_client.database.MessageDaoImpl;
 import edu.fit.santiago.gossipp2p_client.database.PeerDaoImpl;
 import edu.fit.santiago.gossipp2p_client.events.IncomingServerMessageEvent;
+import edu.fit.santiago.gossipp2p_client.models.PeerManager;
 import edu.fit.santiago.gossipp2p_client.models.ServerModel;
 import edu.fit.santiago.gossipp2p_client.socket_threads.TCPClientThread;
 import edu.fit.santiago.gossipp2p_client.socket_threads.UDPClientThread;
@@ -67,9 +68,13 @@ public class UDPServerMessageHandler {
         DatagramPacket datagramPacket = new DatagramPacket(responseBytes, responseBytes.length, clientAddress, port);
         ds.send(datagramPacket);
 
+        peerMessage.peerContactRecieved();
         // Update or insert peer into database
         PeerDaoImpl peerDaoImpl = new PeerDaoImpl(MyApplication.getAppContext());
         peerDaoImpl.updatePeerMessage(peerMessage);
+
+        PeerManager.startPeerTimeout(peerMessage);
+
     }
 
     private void handlePeersQueryMessage (DatagramSocket ds, InetAddress clientAddress, int port) throws IOException {

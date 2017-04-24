@@ -56,6 +56,10 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+
+        // Start the peer manager
+        PeerManager peerManager = new PeerManager();
+
         //new PeerDaoImpl(MyApplication.getAppContext()).deleteAll();
         //new MessageDaoImpl(MyApplication.getAppContext()).deleteAll();
 

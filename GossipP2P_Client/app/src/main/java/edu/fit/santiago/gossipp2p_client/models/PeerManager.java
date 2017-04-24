@@ -1,8 +1,6 @@
 package edu.fit.santiago.gossipp2p_client.models;
 
-import android.icu.util.Calendar;
-import android.icu.util.GregorianCalendar;
-import android.text.method.DateTimeKeyListener;
+import java.util.Calendar;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -27,7 +25,13 @@ public class PeerManager {
             peerRemoval.start();
         }
     }
+
+    public static void startPeerTimeout(PeerMessage peerMessage) {
+        AutomatedPeerRemoval peerRemoval = new AutomatedPeerRemoval(peerMessage);
+        peerRemoval.start();
+    }
 }
+
 
 class AutomatedPeerRemoval extends Thread {
     private  PeerMessage peer;
@@ -41,6 +45,12 @@ class AutomatedPeerRemoval extends Thread {
         for (;;) {
             // First check if the user has already surpassed their stay
             try {
+                PeerDaoImpl peerDao = new PeerDaoImpl(MyApplication.getAppContext());
+                peer = peerDao.getPeerByName(peer.getPeerName());
+
+                if (peer == null)
+                    return;
+
                 Calendar peerContact = Calendar.getInstance();
                 Calendar currentDate = Calendar.getInstance();
 
@@ -50,18 +60,19 @@ class AutomatedPeerRemoval extends Thread {
                 peerContact.setTime(peersLastContact);
                 currentDate.setTime(currentDandT);
 
-                int daysSinceContact = daysBetween(peerContact.getTime(), currentDate.getTime());
+                int daysSinceContact = daysBetween(currentDate.getTime(), peerContact.getTime());
+                long secondsSecondSinceContact = diffSeconds(currentDate.getTime(), peerContact.getTime());
 
                 if (daysSinceContact >= 2) {
-                    PeerDaoImpl peerDao = new PeerDaoImpl(MyApplication.getAppContext());
                     peerDao.deletePeer(peer.getPeerName());
                     IncomingServerMessageEvent.postEventBusMessage("Removed Peer " + peer.getPeerName() + " due to inactivity");
-                    return;
+                     return;
                 }
                 else {
                     // Calculate the time they have remaining until they get booted and put thread to sleep
                     peerContact.add(Calendar.DATE, 2);
-                    Long milliseconds = diffBetweenDays(peerContact.getTime(), currentDate.getTime());
+                    //currentDate.add(Calendar.SECOND, 30);
+                    Long milliseconds = currentDate.getTime().getTime() - peerContact.getTime().getTime();
                     Thread.sleep(milliseconds);
                 }
 
@@ -74,9 +85,10 @@ class AutomatedPeerRemoval extends Thread {
         }
     }
 
-    public long diffBetweenDays (Date d1, Date d2) {
+
+    public long diffSeconds (Date d1, Date d2) {
         long diff = d1.getTime() - d2.getTime();
-        return diff;
+        return diff / 1000;
     }
 
     public int daysBetween(Date d1, Date d2){
